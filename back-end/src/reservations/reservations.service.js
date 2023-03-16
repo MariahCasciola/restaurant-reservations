@@ -12,7 +12,16 @@ function listAllReservationsForOneDate(date) {
     .orderBy("reservation_time");
 }
 
+//create
+function createReservation(reservation) {
+  return knex("reservations")
+    .insert(reservation)
+    .returning("*")
+    .then((createdReservation) => createdReservation[0]);
+}
+
 module.exports = {
   list,
   listAllReservationsForOneDate,
+  createReservation,
 };
