@@ -5,6 +5,7 @@ import Dashboard from "../dashboard/Dashboard";
 import NotFound from "./NotFound";
 import ReservationsForm from "../ReservationsForm";
 import useQuery from "../utils/useQuery";
+import {today} from "../utils/date-time";
 
 /**
  * Defines all the routes for the application.
@@ -16,7 +17,10 @@ import useQuery from "../utils/useQuery";
 function Routes() {
   // console.log(useQuery());
   const query = useQuery();
-  const date = query.get("date");
+  let date = query.get("date");
+  if (!date) {
+    date = today();
+  }
   // console.log(date);
   return (
     <Switch>
@@ -29,8 +33,8 @@ function Routes() {
       <Route path="/dashboard">
         <Dashboard date={date} />
       </Route>
-      <Route path="/dashboard/new" >
-        <ReservationsForm/>
+      <Route path="/reservations/new">
+        <ReservationsForm />
       </Route>
       <Route>
         <NotFound />

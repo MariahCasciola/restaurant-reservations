@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ListReservationsOneDate from "../ListReservationsOneDate";
-import { today } from "../utils/date-time";
 
 /**
  * Defines the dashboard page.
@@ -31,7 +30,7 @@ function Dashboard({ date }) {
     <main>
       <h1>Dashboard</h1>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
+        <h4 className="mb-0">Reservations for {date}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
       <ListReservationsOneDate reservations={reservations} />
