@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import ListReservationsOneDate from "../ListReservationsOneDate";
-import { next, previous, today } from "../utils/date-time";
-import useQuery from "../utils/useQuery";
+import { next, previous } from "../utils/date-time";
 import { useHistory } from "react-router";
 
 /**
@@ -15,7 +14,7 @@ import { useHistory } from "react-router";
 
 // default to today
 function Dashboard({ date }) {
-  const history = useHistory()
+  const history = useHistory();
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
 
@@ -35,11 +34,11 @@ function Dashboard({ date }) {
     // YYYY-MM-DD format
     const prevDate = previous(date);
     //history.push it to the right format
-    history.push(`dashboard?date=${prevDate}`)
+    history.push(`dashboard?date=${prevDate}`);
   };
 
   const getTodayDate = async () => {
-    history.push("/dashboard")
+    history.push("/dashboard");
   };
 
   const getNextDate = async () => {

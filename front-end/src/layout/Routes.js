@@ -15,13 +15,12 @@ import {today} from "../utils/date-time";
  * @returns {JSX.Element}
  */
 function Routes() {
-  // console.log(useQuery());
   const query = useQuery();
   let date = query.get("date");
   if (!date) {
     date = today();
   }
-  // console.log(date);
+
   return (
     <Switch>
       <Route exact={true} path="/">
