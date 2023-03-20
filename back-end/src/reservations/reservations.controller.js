@@ -99,6 +99,34 @@ function hasProperties(...properties) {
   };
 }
 
+function closedOnTuesdaysValidator(req, res, next) {
+  const date = new Date(req.body.data.reservation_date);
+  // reservation date.getDay() converts into a number Tuesday = 1
+  const dayOfTheWeek = date.getDay();
+  // checks if dayOfTheWeek is tuesday, tuesday equals 1, even though the documentation says it equals 2
+  if (dayOfTheWeek === 1) {
+    return next({ status: 400, message: "Restaurant is closed on Tuesdays" });
+  }
+  return next();
+}
+
+function futureReservationsOnlyValidator(req, res, next) {
+  const date = new Date(req.body.data.reservation_date);
+  // changes date from post into miliseconds from January 1, 1970
+  const dateFromPost = Date.parse(date)
+  // todays date from milisecond from January 1, 1970
+  const now = Date.now()
+  //check if date is before today, or today
+  // date from post needs to be  
+  if (dateFromPost <= now) {
+    return next({
+      status: 400,
+      message: "Reservation must be made in the future.",
+    });
+  }
+  return next();
+}
+
 // create reservation
 async function createReservation(req, res) {
   const data = await service.createReservation(req.body.data);
@@ -119,6 +147,8 @@ module.exports = {
     reservationDateValidator,
     reservationTimeValidator,
     peopleValidator,
+    closedOnTuesdaysValidator,
+    futureReservationsOnlyValidator,
     asyncErrorBoundary(createReservation),
   ],
 };
