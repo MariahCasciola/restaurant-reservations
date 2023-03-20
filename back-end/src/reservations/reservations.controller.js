@@ -105,7 +105,7 @@ function closedOnTuesdaysValidator(req, res, next) {
   const dayOfTheWeek = date.getDay();
   // checks if dayOfTheWeek is tuesday, tuesday equals 1, even though the documentation says it equals 2
   if (dayOfTheWeek === 1) {
-    return next({ status: 400, message: "Restaurant is closed on Tuesdays" });
+    return next({ status: 400, message: "Restaurant is closed on Tuesdays." });
   }
   return next();
 }

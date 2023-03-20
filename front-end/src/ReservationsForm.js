@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { createReservations } from "./utils/api";
+import DateValidation from "./validation/DateValidation";
 
 function ReservationsForm() {
   const history = useHistory();
@@ -13,7 +14,10 @@ function ReservationsForm() {
     reservation_time: "",
     people: "",
   };
+  // useState for state of the reservations form
   const [formData, setFormData] = useState({ ...initialFormState });
+  // add a useState for errors
+  const [errors, setErrors] = useState(null);
 
   const handleChange = ({ target }) => {
     setFormData({
@@ -34,7 +38,9 @@ function ReservationsForm() {
         });
         setFormData({ ...initialFormState });
         history.push(`/dashboard?date=${newReservation.reservation_date}`);
-      } catch (error) {}
+      } catch (error) {
+        setErrors(error);
+      }
     }
     createNewReservation();
   };
@@ -42,6 +48,7 @@ function ReservationsForm() {
   return (
     <div>
       <form onSubmit={handleSubmit}>
+        <DateValidation errors={errors} />
         <label htmlFor="first_name">
           First Name:
           <input
@@ -97,7 +104,6 @@ function ReservationsForm() {
           />
         </label>
         <button type="submit">Submit</button>
-        {/* type reset, or type cancel? */}
         <button type="button" onClick={() => history.goBack()}>
           Cancel
         </button>
