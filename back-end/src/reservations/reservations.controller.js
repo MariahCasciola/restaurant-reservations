@@ -100,7 +100,9 @@ function hasProperties(...properties) {
 }
 
 function closedOnTuesdaysValidator(req, res, next) {
-  const date = new Date(req.body.data.reservation_date + "T" + req.body.data.reservation_time);
+  const date = new Date(
+    req.body.data.reservation_date + "T" + req.body.data.reservation_time
+  );
   // reservation date.getDay() converts into a number Tuesday = 1
   const dayOfTheWeek = date.getDay();
   // checks if dayOfTheWeek is tuesday, tuesday equals 1, even though the documentation says it equals 2
@@ -131,7 +133,7 @@ function futureReservationsOnlyValidator(req, res, next) {
 
 // no reservation time before 10:30 am
 function timeConstraintsToCreateReservations(req, res, next) {
-  // format of time from request before changing: 09:30, 23:30, 22:45
+  // format date and time
   const time = new Date(
     req.body.data.reservation_date + "T" + req.body.data.reservation_time
   );
@@ -144,16 +146,14 @@ function timeConstraintsToCreateReservations(req, res, next) {
       message: "Reservation time must be at 10:30 am, or later.",
     });
   }
+  // closes
   else if(timeHours >= 9 && timeMinutes >=30){
     return next({
       status: 400,
-      message: "Reservation time must be at 9:30 pm, or earlier, the restaurant closes at 10:30 pm."
-    })
+      message: "Reservation time must be at 9:30 pm, or earlier, the restaurant will be closed at 10:30 pm."
+    });
   }
-  return next();
 }
-// no reservation time after 9:30 pm, 21:30?? military
-// only allow reservation starting after noon today
 
 // create reservation
 async function createReservation(req, res) {

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { createReservations } from "./utils/api";
 import DateValidation from "./validation/DateValidation";
+import TimeValidation from "./validation/TimeValidation";
 
 function ReservationsForm() {
   const history = useHistory();
@@ -49,6 +50,7 @@ function ReservationsForm() {
     <div>
       <form onSubmit={handleSubmit}>
         <DateValidation errors={errors} />
+        <TimeValidation errors={errors}/>
         <label htmlFor="first_name">
           First Name:
           <input
