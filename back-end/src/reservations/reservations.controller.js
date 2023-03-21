@@ -100,7 +100,9 @@ function hasProperties(...properties) {
 }
 
 function closedOnTuesdaysValidator(req, res, next) {
-  const date = new Date(req.body.data.reservation_date);
+  const date = new Date(
+    req.body.data.reservation_date + "T" + req.body.data.reservation_time
+  );
   // reservation date.getDay() converts into a number Tuesday = 1
   const dayOfTheWeek = date.getDay();
   // checks if dayOfTheWeek is tuesday, tuesday equals 1, even though the documentation says it equals 2
@@ -113,15 +115,43 @@ function closedOnTuesdaysValidator(req, res, next) {
 function futureReservationsOnlyValidator(req, res, next) {
   const date = new Date(req.body.data.reservation_date);
   // changes date from post into miliseconds from January 1, 1970
-  const dateFromPost = Date.parse(date)
+  const dateFromPost = Date.parse(date);
   // todays date from milisecond from January 1, 1970
-  const now = Date.now()
+  const now = Date.now();
   //check if date is before today, or today
-  // date from post needs to be  
+  // date from post needs to be
   if (dateFromPost <= now) {
     return next({
       status: 400,
       message: "Reservation must be made in the future.",
+    });
+  }
+  return next();
+}
+
+// return 400 when ANY of these are violated
+
+// no reservation time before 10:30 am
+function timeConstraintsToCreateReservations(req, res, next) {
+  // format date and time
+  const time = new Date(
+    req.body.data.reservation_date + "T" + req.body.data.reservation_time
+  );
+  const timeHours = time.getHours();
+  const timeMinutes = time.getMinutes();
+  // opens
+  if (timeHours <= 10 && timeMinutes <= 30) {
+    return next({
+      status: 400,
+      message: "Reservation time must be at 10:30 am, or later.",
+    });
+  }
+  // closes
+  if ((timeHours >= 21 && timeMinutes >= 30) || timeHours >= 10) {
+    return next({
+      status: 400,
+      message:
+        "Reservation time must be at 9:30 pm, or earlier, the restaurant will be closed at 10:30 pm.",
     });
   }
   return next();
@@ -149,6 +179,7 @@ module.exports = {
     peopleValidator,
     closedOnTuesdaysValidator,
     futureReservationsOnlyValidator,
+    timeConstraintsToCreateReservations,
     asyncErrorBoundary(createReservation),
   ],
 };
