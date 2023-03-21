@@ -100,7 +100,7 @@ function hasProperties(...properties) {
 }
 
 function closedOnTuesdaysValidator(req, res, next) {
-  const date = new Date(req.body.data.reservation_date);
+  const date = new Date(req.body.data.reservation_date + "T" + req.body.data.reservation_time);
   // reservation date.getDay() converts into a number Tuesday = 1
   const dayOfTheWeek = date.getDay();
   // checks if dayOfTheWeek is tuesday, tuesday equals 1, even though the documentation says it equals 2
@@ -113,11 +113,11 @@ function closedOnTuesdaysValidator(req, res, next) {
 function futureReservationsOnlyValidator(req, res, next) {
   const date = new Date(req.body.data.reservation_date);
   // changes date from post into miliseconds from January 1, 1970
-  const dateFromPost = Date.parse(date)
+  const dateFromPost = Date.parse(date);
   // todays date from milisecond from January 1, 1970
-  const now = Date.now()
+  const now = Date.now();
   //check if date is before today, or today
-  // date from post needs to be  
+  // date from post needs to be
   if (dateFromPost <= now) {
     return next({
       status: 400,
@@ -126,6 +126,34 @@ function futureReservationsOnlyValidator(req, res, next) {
   }
   return next();
 }
+
+// return 400 when ANY of these are violated
+
+// no reservation time before 10:30 am
+function timeConstraintsToCreateReservations(req, res, next) {
+  // format of time from request before changing: 09:30, 23:30, 22:45
+  const time = new Date(
+    req.body.data.reservation_date + "T" + req.body.data.reservation_time
+  );
+  const timeHours = time.getHours();
+  const timeMinutes = time.getMinutes();
+  // opens
+  if (timeHours <= 10 && timeMinutes <= 30) {
+    return next({
+      status: 400,
+      message: "Reservation time must be at 10:30 am, or later.",
+    });
+  }
+  else if(timeHours >= 9 && timeMinutes >=30){
+    return next({
+      status: 400,
+      message: "Reservation time must be at 9:30 pm, or earlier, the restaurant closes at 10:30 pm."
+    })
+  }
+  return next();
+}
+// no reservation time after 9:30 pm, 21:30?? military
+// only allow reservation starting after noon today
 
 // create reservation
 async function createReservation(req, res) {
@@ -149,6 +177,7 @@ module.exports = {
     peopleValidator,
     closedOnTuesdaysValidator,
     futureReservationsOnlyValidator,
+    timeConstraintsToCreateReservations,
     asyncErrorBoundary(createReservation),
   ],
 };
