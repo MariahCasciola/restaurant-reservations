@@ -147,12 +147,14 @@ function timeConstraintsToCreateReservations(req, res, next) {
     });
   }
   // closes
-  else if(timeHours >= 9 && timeMinutes >=30){
+  if ((timeHours >= 21 && timeMinutes >= 30) || timeHours >= 10) {
     return next({
       status: 400,
-      message: "Reservation time must be at 9:30 pm, or earlier, the restaurant will be closed at 10:30 pm."
+      message:
+        "Reservation time must be at 9:30 pm, or earlier, the restaurant will be closed at 10:30 pm.",
     });
   }
+  return next();
 }
 
 // create reservation

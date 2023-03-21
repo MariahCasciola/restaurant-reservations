@@ -2,7 +2,7 @@ import React from "react";
 
 function TimeValidation({ errors }) {
   if (errors) {
-    // checking for tuesday
+    // checking for opening
     if (errors.message === "Reservation time must be at 10:30 am, or later.") {
       return (
         <div className="alert alert-danger">
@@ -10,7 +10,7 @@ function TimeValidation({ errors }) {
         </div>
       );
     }
-    // checking for days
+    // checking for closing
     else if (
       errors.message ===
       "Reservation time must be at 9:30 pm, or earlier, the restaurant will be closed at 10:30 pm."
