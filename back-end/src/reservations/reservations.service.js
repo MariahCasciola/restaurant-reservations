@@ -12,6 +12,10 @@ function listAllReservationsForOneDate(date) {
     .orderBy("reservation_time");
 }
 
+function read(reservation_id) {
+  return knex("reservations").select("*").where({ reservation_id }).first();
+}
+
 //create
 function createReservation(reservation) {
   return knex("reservations")
@@ -23,5 +27,6 @@ function createReservation(reservation) {
 module.exports = {
   list,
   listAllReservationsForOneDate,
+  read,
   createReservation,
 };

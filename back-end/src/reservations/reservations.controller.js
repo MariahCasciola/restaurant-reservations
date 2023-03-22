@@ -16,6 +16,20 @@ async function list(req, res) {
   return res.json({ data });
 }
 
+async function reservationExists(req, res, next) {
+  const reservation = await service.read(req.params.reservationId);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 400, message: "Reservation does not exist." });
+}
+
+function read(req, res, next) {
+  const data = res.locals.reservation;
+  res.json({ data });
+}
+
 // validProperties array
 const validProperties = [
   "first_name",
@@ -164,7 +178,8 @@ async function createReservation(req, res) {
 }
 
 module.exports = {
-  list: asyncErrorBoundary(list),
+  list: [asyncErrorBoundary(list)],
+  read: [asyncErrorBoundary(reservationExists), read],
   create: [
     hasValidProperties,
     dataExists,
