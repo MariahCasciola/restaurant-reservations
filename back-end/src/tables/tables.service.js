@@ -5,14 +5,17 @@ function list() {
   return knex("tables").select("*").orderBy("table_name");
 }
 
-// read all tables with 
+// read all tables with
 function read(table_id) {
-  return knex("tables").select("*").where({ table_id }).first()
+  return knex("tables").select("*").where({ table_id }).first();
 }
 
 // post
 function create(newTable) {
-  return knex("tables").insert(newTable).returning("*");
+  return knex("tables")
+    .insert(newTable)
+    .returning("*")
+    .then((createdTables) => createdTables[0]);
 }
 
 //PUT, needs an table_id and a body
