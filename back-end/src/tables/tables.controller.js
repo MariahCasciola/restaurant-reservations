@@ -1,5 +1,6 @@
 const service = require("./tables.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const reservationService = require("../reservations/reservations.service");
 
 async function list(req, res, next) {
   const data = await service.list();
@@ -9,13 +10,23 @@ async function list(req, res, next) {
 async function tableExists(req, res, next) {
   const table = await service.read(req.params.table_id);
   if (table) {
-    table = res.locals.table;
+    res.locals.table = table;
     return next();
   }
   next({
     status: 404,
     message: `Table id ${req.params.table_id} does not exist`,
   });
+}
+
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.body.data;
+  const reservation = await reservationService.read(reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 400, message: "Reservation does not exist." });
 }
 
 function read(req, res, next) {
@@ -26,12 +37,12 @@ function read(req, res, next) {
 
 const validProperties = ["table_name", "capacity"];
 
-function hasProperties(...properties) {
+function hasProperties(...validProperties) {
   return function (req, res, next) {
     const { data = {} } = req.body;
 
     try {
-      properties.forEach((property) => {
+      validProperties.forEach((property) => {
         if (!data[property]) {
           const error = new Error(`A '${property}' property is required.`);
           error.status = 400;
@@ -69,18 +80,44 @@ async function create(req, res, next) {
   res.status(201).json({ data });
 }
 
+// validate data exists, middleware for update function
+function dataExists(req, res, next) {
+  const data = req.body.data;
+  if (data) {
+    return next();
+  }
+  return next({ status: 400, message: "There is no data" });
+}
+
+// exists means defined or initalized
+
+// missing means what? null?
+
+function capacitySufficientValidator(req, res, next) {
+  const table = res.locals.table;
+  const reservation = res.locals.reservation;
+  if (table.capacity < reservation.people) {
+    return next({
+      status: 400,
+      message: "Table does not have sufficient capacity.",
+    });
+  }
+  if (table.capacity >= reservation.people) return next();
+}
+
 // put request to update, needs an table_id and a body
 async function update(req, res, next) {
+  const table = res.locals.table;
+  const reservation = res.locals.reservation;
+  // console.log("*************** table", table)
+  // console.log("*************** reservation", reservation);
   const updatedTable = {
-    ...res.locals.table,
-    ...req.body.data,
+    ...table.reservation_id,
+    reservation_id: reservation.reservation_id,
   };
   const data = await service.update(updatedTable);
   res.json({ data });
 }
-
-// if a table is occupied, it will  have a reservation_id
-// NOT OCCUPIED, it will not have a reservation_id
 
 module.exports = {
   list: [asyncErrorBoundary(list)],
@@ -92,5 +129,11 @@ module.exports = {
     capacityIsANumberValidator,
     asyncErrorBoundary(create),
   ],
-  update: [asyncErrorBoundary(update)],
+  update: [
+    dataExists,
+    asyncErrorBoundary(tableExists),
+    asyncErrorBoundary(reservationExists),
+    capacitySufficientValidator,
+    asyncErrorBoundary(update),
+  ],
 };

@@ -19,8 +19,11 @@ function create(newTable) {
 }
 
 //PUT, needs an table_id and a body
-function update() {
-  return knex("tables");
+function update(updatedTable) {
+  return knex("tables")
+    .select("*")
+    .where({ reservation_id: updatedTable.reservation_id })
+    .update(updatedTable, "*");
 }
 
 module.exports = {
