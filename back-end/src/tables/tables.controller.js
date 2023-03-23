@@ -26,7 +26,7 @@ async function reservationExists(req, res, next) {
     res.locals.reservation = reservation;
     return next();
   }
-  next({ status: 400, message: "Reservation does not exist." });
+  next({ status: 404, message: `${reservation_id} does not exist.` });
 }
 
 function read(req, res, next) {
@@ -89,9 +89,13 @@ function dataExists(req, res, next) {
   return next({ status: 400, message: "There is no data" });
 }
 
-// exists means defined or initalized
-
-// missing means what? null?
+function reservationIdMissing(req, res, next) {
+  const { reservation_id } = req.body.data;
+  if (!reservation_id) {
+    return next({ status: 400, message: "reservation_id does not exist." });
+  }
+  return next();
+}
 
 function capacitySufficientValidator(req, res, next) {
   const table = res.locals.table;
@@ -102,17 +106,25 @@ function capacitySufficientValidator(req, res, next) {
       message: "Table does not have sufficient capacity.",
     });
   }
-  if (table.capacity >= reservation.people) return next();
+  return next();
+}
+
+// if a table is occupied return 400
+// how to tell if a table is occupied when a reserveration_id from table, is not null
+function tableIsOccupied(req, res, next) {
+  const { table } = res.locals;
+  if (table.reservation_id !== null) {
+    return next({ status: 400, message: "Table is occupied." });
+  }
+  return next();
 }
 
 // put request to update, needs an table_id and a body
 async function update(req, res, next) {
   const table = res.locals.table;
   const reservation = res.locals.reservation;
-  // console.log("*************** table", table)
-  // console.log("*************** reservation", reservation);
   const updatedTable = {
-    ...table.reservation_id,
+    table_id: table.table_id,
     reservation_id: reservation.reservation_id,
   };
   const data = await service.update(updatedTable);
@@ -131,9 +143,11 @@ module.exports = {
   ],
   update: [
     dataExists,
+    reservationIdMissing,
     asyncErrorBoundary(tableExists),
     asyncErrorBoundary(reservationExists),
     capacitySufficientValidator,
+    tableIsOccupied,
     asyncErrorBoundary(update),
   ],
 };

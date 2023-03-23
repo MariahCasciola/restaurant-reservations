@@ -22,7 +22,7 @@ function create(newTable) {
 function update(updatedTable) {
   return knex("tables")
     .select("*")
-    .where({ reservation_id: updatedTable.reservation_id })
+    .where({ table_id: updatedTable.table_id })
     .update(updatedTable, "*");
 }
 
