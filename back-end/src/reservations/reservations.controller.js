@@ -22,7 +22,7 @@ async function reservationExists(req, res, next) {
     res.locals.reservation = reservation;
     return next();
   }
-  next({ status: 400, message: "Reservation does not exist." });
+  next({ status: 404, message: `${req.params.reservationId} does not exist.` });
 }
 
 function read(req, res, next) {
@@ -120,7 +120,7 @@ function closedOnTuesdaysValidator(req, res, next) {
   // reservation date.getDay() converts into a number Tuesday = 1
   const dayOfTheWeek = date.getDay();
   // checks if dayOfTheWeek is tuesday, tuesday equals 1, even though the documentation says it equals 2
-  if (dayOfTheWeek === 1) {
+  if (dayOfTheWeek === 2) {
     return next({ status: 400, message: "Restaurant is closed on Tuesdays." });
   }
   return next();
@@ -154,14 +154,14 @@ function timeConstraintsToCreateReservations(req, res, next) {
   const timeHours = time.getHours();
   const timeMinutes = time.getMinutes();
   // opens
-  if (timeHours <= 10 && timeMinutes <= 30) {
+  if (timeHours < 10 || (timeHours === 10 && timeMinutes < 30)) {
     return next({
       status: 400,
       message: "Reservation time must be at 10:30 am, or later.",
     });
   }
   // closes
-  if ((timeHours >= 21 && timeMinutes >= 30) || timeHours >= 10) {
+  if (timeHours > 21 || (timeHours === 21 && timeMinutes >= 30)) {
     return next({
       status: 400,
       message:
