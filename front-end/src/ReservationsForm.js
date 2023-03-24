@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import ErrorAlert from "./layout/ErrorAlert";
 import { createReservations } from "./utils/api";
-import DateValidation from "./validation/DateValidation";
-import TimeValidation from "./validation/TimeValidation";
 
 function ReservationsForm() {
   const history = useHistory();
@@ -17,8 +16,8 @@ function ReservationsForm() {
   };
   // useState for state of the reservations form
   const [formData, setFormData] = useState({ ...initialFormState });
-  // add a useState for errors
-  const [errors, setErrors] = useState(null);
+  // add a useState for error
+  const [error, setError] = useState(null);
 
   const handleChange = ({ target }) => {
     setFormData({
@@ -40,7 +39,7 @@ function ReservationsForm() {
         setFormData({ ...initialFormState });
         history.push(`/dashboard?date=${newReservation.reservation_date}`);
       } catch (error) {
-        setErrors(error);
+        setError(error);
       }
     }
     createNewReservation();
@@ -49,8 +48,7 @@ function ReservationsForm() {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <DateValidation errors={errors} />
-        <TimeValidation errors={errors}/>
+        <ErrorAlert error={error} />
         <label htmlFor="first_name">
           First Name:
           <input
