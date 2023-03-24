@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
-import ListReservationsOneDate from "../ListReservationsOneDate";
+import ListReservationsOneDate from "../reservations/ListReservationsOneDate";
 import { next, previous } from "../utils/date-time";
 import { useHistory } from "react-router";
 
