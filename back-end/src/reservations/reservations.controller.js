@@ -127,18 +127,31 @@ function closedOnTuesdaysValidator(req, res, next) {
 }
 
 function futureReservationsOnlyValidator(req, res, next) {
-  const date = new Date(req.body.data.reservation_date);
-  // changes date from post into miliseconds from January 1, 1970
-  const dateFromPost = Date.parse(date);
-  // todays date from milisecond from January 1, 1970
-  const now = Date.parse(Date.now());
-  //check if date is before today, or today
-  // date from post needs to be
-  if (dateFromPost <= now) {
-    return next({
-      status: 400,
-      message: "Reservation must be made in the future.",
-    });
+  const date = new Date(
+    req.body.data.reservation_date + "T" + req.body.data.reservation_time
+  );
+  const now = new Date();
+  const futureError = {
+    status: 400,
+    message: "Reservation must be in the future.",
+  };
+  // year
+  if (date.getFullYear() < now.getFullYear()) return next(futureError);
+  if (date.getFullYear() === now.getFullYear()) {
+    // month
+    if (date.getMonth() < now.getMonth()) return next(futureError);
+    if (date.getMonth() === now.getMonth()) {
+      // date
+      if (date.getDate() < now.getDate()) return next(futureError);
+      if (date.getDate() === now.getDate()) {
+        // hour
+        if (date.getHours() < now.getHours()) return next(futureError);
+        if (date.getHours() === now.getHours()) {
+          // minute
+          if (date.getMinutes() < now.getMinutes()) return next(futureError);
+        }
+      }
+    }
   }
   return next();
 }
