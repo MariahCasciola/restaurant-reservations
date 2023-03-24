@@ -131,7 +131,7 @@ function futureReservationsOnlyValidator(req, res, next) {
   // changes date from post into miliseconds from January 1, 1970
   const dateFromPost = Date.parse(date);
   // todays date from milisecond from January 1, 1970
-  const now = Date.now();
+  const now = Date.parse(Date.now());
   //check if date is before today, or today
   // date from post needs to be
   if (dateFromPost <= now) {
