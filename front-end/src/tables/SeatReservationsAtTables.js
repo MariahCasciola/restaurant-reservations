@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
+import ErrorAlert from "../layout/ErrorAlert";
 import { listTables, updateTable } from "../utils/api";
 
 function SeatReservationsAtTables() {
-  // this is rendered in Routes, should be rendered where tables can be passed down as a prop
-
-  // pass table in order to get
   const history = useHistory();
   const params = useParams();
   // for load tables
   const [tables, setTables] = useState([]);
   // for handle submit update table
   const [selectedTableId, setSelectedTableId] = useState("");
+  // for error message for when a reservation cannot be seated at an occupied table
+  const [tablesError, setTablesError] = useState(null)
 
   useEffect(() => {
     const controller = new AbortController();
@@ -41,14 +41,14 @@ function SeatReservationsAtTables() {
           selectedTableId,
           controller.signal
         );
+        history.push(`/dashboard`);
         // parameters for reservation_id, table_id, signal
         // params = reservation_id
       } catch (error) {
-        console.log(error);
+        setTablesError(error)
       }
     }
-    seatTable();
-    history.push(`/dashboard`);
+    await seatTable();
     return () => controller.abort();
   };
 
@@ -61,6 +61,7 @@ function SeatReservationsAtTables() {
   // map each table into a table option
   return (
     <div>
+      <ErrorAlert error={tablesError}/>
       <form onSubmit={handleSubmit}>
         <label>
           choose table

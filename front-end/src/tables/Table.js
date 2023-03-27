@@ -6,6 +6,9 @@ function Table({ table }) {
     <div>
       <div>Table: {table_name}</div>
       <div>Capacity: {capacity}</div>
+      <div data-table-id-status={table.table_id}>
+        {table.reservation_id ? "OCCUPIED" : "FREE"}
+      </div>
     </div>
   );
 }
