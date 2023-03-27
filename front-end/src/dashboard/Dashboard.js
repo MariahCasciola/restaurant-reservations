@@ -70,7 +70,7 @@ function Dashboard({ date }) {
       <ErrorAlert error={reservationsError} />
       <ErrorAlert error={tablesError}/>
       <ListReservationsOneDate reservations={reservations}/>
-      <ListTables tables={tables}/>
+      <ListTables tables={tables} loadDashboard={loadDashboard}/>
       {/* {JSON.stringify(tables)} */}
     </main>
   );
