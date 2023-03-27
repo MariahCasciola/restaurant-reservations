@@ -20,7 +20,8 @@ async function tableExists(req, res, next) {
 }
 
 async function reservationExists(req, res, next) {
-  const { reservation_id } = req.body.data;
+  // console.log("req", req);
+  const { reservation_id } = req.body.data;  
   const reservation = await reservationService.read(reservation_id);
   if (reservation) {
     res.locals.reservation = reservation;
@@ -131,6 +132,27 @@ async function update(req, res, next) {
   res.json({ data });
 }
 
+async function tableIsNotOccupied(req, res, next){
+  const { table } = res.locals;
+  if (table.reservation_id === null) {
+     return next({ status: 400, message: "Table is not occupied" });
+   }
+   return next()
+}
+
+async function destroy(req, res, next) {
+  const table = res.locals.table;
+  // console.log("table", table)
+  // const reservation = res.locals.reservation;
+  const updatedTable = {
+    table_id: table.table_id,
+    reservation_id: null,
+  };
+  const data = await service.update(updatedTable);
+  // console.log("data from controller", data)
+  return res.json({ data });
+}
+
 module.exports = {
   list: [asyncErrorBoundary(list)],
   read: [asyncErrorBoundary(tableExists), read],
@@ -149,5 +171,10 @@ module.exports = {
     capacitySufficientValidator,
     tableIsOccupied,
     asyncErrorBoundary(update),
+  ],
+  destroy: [
+    asyncErrorBoundary(tableExists),
+    asyncErrorBoundary(tableIsNotOccupied),
+    asyncErrorBoundary(destroy),
   ],
 };
