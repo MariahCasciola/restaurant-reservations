@@ -19,6 +19,7 @@ function create(newTable) {
 }
 
 //PUT, needs an table_id and a body
+//also used for the "destroy" function in controller and router, which just updates the reservation_id to null to delete a 
 function update(updatedTable) {
   return knex("tables")
     .select("*")
