@@ -1,6 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-function Reservation({ reservation, loadList }) {
+function Reservation({ reservation }) {
   const {
     first_name = "",
     last_name = "",
@@ -19,6 +20,7 @@ function Reservation({ reservation, loadList }) {
       <div> Date: {reservation_date} </div>
       <div> Time: {reservation_time} </div>
       <div> Number of guests: {people} </div>
+      <Link to={`/reservations/${reservation.reservation_id}/seat`}>Seat</Link>
     </div>
   );
 }

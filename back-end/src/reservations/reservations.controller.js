@@ -16,6 +16,20 @@ async function list(req, res) {
   return res.json({ data });
 }
 
+async function reservationExists(req, res, next) {
+  const reservation = await service.read(req.params.reservationId);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 404, message: `${req.params.reservationId} does not exist.` });
+}
+
+function read(req, res, next) {
+  const data = res.locals.reservation;
+  res.json({ data });
+}
+
 // validProperties array
 const validProperties = [
   "first_name",
@@ -106,25 +120,38 @@ function closedOnTuesdaysValidator(req, res, next) {
   // reservation date.getDay() converts into a number Tuesday = 1
   const dayOfTheWeek = date.getDay();
   // checks if dayOfTheWeek is tuesday, tuesday equals 1, even though the documentation says it equals 2
-  if (dayOfTheWeek === 1) {
+  if (dayOfTheWeek === 2) {
     return next({ status: 400, message: "Restaurant is closed on Tuesdays." });
   }
   return next();
 }
 
 function futureReservationsOnlyValidator(req, res, next) {
-  const date = new Date(req.body.data.reservation_date);
-  // changes date from post into miliseconds from January 1, 1970
-  const dateFromPost = Date.parse(date);
-  // todays date from milisecond from January 1, 1970
-  const now = Date.now();
-  //check if date is before today, or today
-  // date from post needs to be
-  if (dateFromPost <= now) {
-    return next({
-      status: 400,
-      message: "Reservation must be made in the future.",
-    });
+  const date = new Date(
+    req.body.data.reservation_date + "T" + req.body.data.reservation_time
+  );
+  const now = new Date();
+  const futureError = {
+    status: 400,
+    message: "Reservation must be in the future.",
+  };
+  // year
+  if (date.getFullYear() < now.getFullYear()) return next(futureError);
+  if (date.getFullYear() === now.getFullYear()) {
+    // month
+    if (date.getMonth() < now.getMonth()) return next(futureError);
+    if (date.getMonth() === now.getMonth()) {
+      // date
+      if (date.getDate() < now.getDate()) return next(futureError);
+      if (date.getDate() === now.getDate()) {
+        // hour
+        if (date.getHours() < now.getHours()) return next(futureError);
+        if (date.getHours() === now.getHours()) {
+          // minute
+          if (date.getMinutes() < now.getMinutes()) return next(futureError);
+        }
+      }
+    }
   }
   return next();
 }
@@ -140,14 +167,14 @@ function timeConstraintsToCreateReservations(req, res, next) {
   const timeHours = time.getHours();
   const timeMinutes = time.getMinutes();
   // opens
-  if (timeHours <= 10 && timeMinutes <= 30) {
+  if (timeHours < 10 || (timeHours === 10 && timeMinutes < 30)) {
     return next({
       status: 400,
       message: "Reservation time must be at 10:30 am, or later.",
     });
   }
   // closes
-  if ((timeHours >= 21 && timeMinutes >= 30) || timeHours >= 10) {
+  if (timeHours > 21 || (timeHours === 21 && timeMinutes >= 30)) {
     return next({
       status: 400,
       message:
@@ -164,7 +191,8 @@ async function createReservation(req, res) {
 }
 
 module.exports = {
-  list: asyncErrorBoundary(list),
+  list: [asyncErrorBoundary(list)],
+  read: [asyncErrorBoundary(reservationExists), read],
   create: [
     hasValidProperties,
     dataExists,
