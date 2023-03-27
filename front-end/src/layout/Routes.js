@@ -5,7 +5,9 @@ import Dashboard from "../dashboard/Dashboard";
 import NotFound from "./NotFound";
 import ReservationsForm from "../reservations/ReservationsForm";
 import useQuery from "../utils/useQuery";
-import {today} from "../utils/date-time";
+import { today } from "../utils/date-time";
+import TablesForm from "../tables/TablesForm";
+import SeatReservationsAtTables from "../tables/SeatReservationsAtTables";
 
 /**
  * Defines all the routes for the application.
@@ -34,6 +36,12 @@ function Routes() {
       </Route>
       <Route path="/reservations/new">
         <ReservationsForm />
+      </Route>
+      <Route path="/tables/new">
+        <TablesForm />
+      </Route>
+      <Route path="/reservations/:reservation_id/seat">
+        <SeatReservationsAtTables />
       </Route>
       <Route>
         <NotFound />
