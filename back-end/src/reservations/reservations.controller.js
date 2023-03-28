@@ -4,16 +4,6 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
-// GET validation for no finished reservations
-async function noFinishedReservations(req, res, next) {
-//   // req.body is an empty object, why?
-//   const reservation = req.body.data;
-//   if (reservation.status === "finished") {
-//     return next("cannot include a finished status.");
-//   }
-//   return next();
-}
-
 async function list(req, res) {
   const { date } = req.query;
   //  if the URL is /dashboard?date=2035-12-30 then send a GET to /reservations?date=2035-12-30 to list the reservations for that date)
@@ -21,6 +11,11 @@ async function list(req, res) {
   if (date) {
     const data = await service.listAllReservationsForOneDate(date);
     return res.json({ data });
+  }
+  const {mobile_number} = req.query;
+  if (mobile_number){
+    const data = await service.search(mobile_number)
+    return res.json({data})
   }
   const data = await service.list();
   return res.json({ data });
