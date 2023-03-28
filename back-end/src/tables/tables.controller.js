@@ -2,6 +2,8 @@ const service = require("./tables.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const reservationService = require("../reservations/reservations.service");
 
+// GET /resevations/date=XXXX-XX-XX validation
+
 async function list(req, res, next) {
   const data = await service.list();
   return res.json({ data });
@@ -20,8 +22,19 @@ async function tableExists(req, res, next) {
 }
 
 async function reservationExists(req, res, next) {
-  // console.log("req", req);
-  const { reservation_id } = req.body.data;  
+  const { reservation_id } = req.body.data;
+  const reservation = await reservationService.read(reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 404, message: `${reservation_id} does not exist.` });
+}
+
+// for delete method
+async function reservationExistsInTable(req, res, next) {
+  //reservation_id exists in a table
+  const { reservation_id } = res.locals.table;
   const reservation = await reservationService.read(reservation_id);
   if (reservation) {
     res.locals.reservation = reservation;
@@ -120,6 +133,39 @@ function tableIsOccupied(req, res, next) {
   return next();
 }
 
+// used for PUT so it needs a body and an id
+async function updateReservationSeated(req, res, next) {
+  const reservation = res.locals.reservation;
+  const updatedReservation = {
+    reservation_id: reservation.reservation_id,
+    status: "seated",
+  };
+  await reservationService.update(updatedReservation);
+  next();
+}
+
+// used for DELETE method, needs an id
+async function updateReservationFinished(req, res, next) {
+  const reservation = res.locals.reservation;
+  const updatedReservation = {
+    reservation_id: reservation.reservation_id,
+    status: "finished",
+  };
+  await reservationService.update(updatedReservation);
+  next();
+}
+
+// validation for put request
+// returns 400 if reservation is already seated
+function reservationIsSeated(req, res, next) {
+  const { reservation } = res.locals;
+  // reservation is already seated if the status is seated
+  if (reservation.status === "seated") {
+    return next({ status: 400, message: "Reservation is already seated." });
+  }
+  return next();
+}
+
 // put request to update, needs an table_id and a body
 async function update(req, res, next) {
   const table = res.locals.table;
@@ -132,24 +178,21 @@ async function update(req, res, next) {
   res.json({ data });
 }
 
-async function tableIsNotOccupied(req, res, next){
+function tableIsNotOccupied(req, res, next) {
   const { table } = res.locals;
   if (table.reservation_id === null) {
-     return next({ status: 400, message: "Table is not occupied" });
-   }
-   return next()
+    return next({ status: 400, message: "Table is not occupied" });
+  }
+  return next();
 }
 
 async function destroy(req, res, next) {
   const table = res.locals.table;
-  // console.log("table", table)
-  // const reservation = res.locals.reservation;
   const updatedTable = {
     table_id: table.table_id,
     reservation_id: null,
   };
   const data = await service.update(updatedTable);
-  // console.log("data from controller", data)
   return res.json({ data });
 }
 
@@ -170,11 +213,15 @@ module.exports = {
     asyncErrorBoundary(reservationExists),
     capacitySufficientValidator,
     tableIsOccupied,
+    reservationIsSeated,
+    asyncErrorBoundary(updateReservationSeated),
     asyncErrorBoundary(update),
   ],
   destroy: [
     asyncErrorBoundary(tableExists),
-    asyncErrorBoundary(tableIsNotOccupied),
+    tableIsNotOccupied,
+    asyncErrorBoundary(reservationExistsInTable),
+    asyncErrorBoundary(updateReservationFinished),
     asyncErrorBoundary(destroy),
   ],
 };

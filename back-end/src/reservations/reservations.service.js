@@ -9,6 +9,7 @@ function list() {
 function listAllReservationsForOneDate(date) {
   return knex("reservations")
     .where("reservation_date", date)
+    .whereNot("status", "finished")
     .orderBy("reservation_time");
 }
 
@@ -24,9 +25,19 @@ function createReservation(reservation) {
     .then((createdReservation) => createdReservation[0]);
 }
 
+// update
+function update(updatedReservation) {
+  return knex("reservations")
+    .select("*")
+    .where({ reservation_id: updatedReservation.reservation_id })
+    .update(updatedReservation, "*")
+    .then((updatedReservation) => updatedReservation[0]);
+}
+
 module.exports = {
   list,
   listAllReservationsForOneDate,
   read,
   createReservation,
+  update,
 };
