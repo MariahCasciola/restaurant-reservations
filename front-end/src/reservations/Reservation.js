@@ -20,7 +20,14 @@ function Reservation({ reservation }) {
       <div> Date: {reservation_date} </div>
       <div> Time: {reservation_time} </div>
       <div> Number of guests: {people} </div>
-      <Link to={`/reservations/${reservation.reservation_id}/seat`}>Seat</Link>
+      <div data-reservation-id-status={reservation.reservation_id}>
+        Status: {reservation.status}
+      </div>
+      {reservation.status === "booked" ? (
+        <Link to={`/reservations/${reservation.reservation_id}/seat`}>
+          Seat
+        </Link>
+      ) : null}
     </div>
   );
 }
