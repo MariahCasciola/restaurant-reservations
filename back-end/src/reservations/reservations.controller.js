@@ -4,6 +4,16 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
+// GET validation for no finished reservations
+async function noFinishedReservations(req, res, next) {
+//   // req.body is an empty object, why?
+//   const reservation = req.body.data;
+//   if (reservation.status === "finished") {
+//     return next("cannot include a finished status.");
+//   }
+//   return next();
+}
+
 async function list(req, res) {
   const { date } = req.query;
   //  if the URL is /dashboard?date=2035-12-30 then send a GET to /reservations?date=2035-12-30 to list the reservations for that date)
@@ -18,6 +28,8 @@ async function list(req, res) {
 
 async function reservationExists(req, res, next) {
   const reservation = await service.read(req.params.reservationId);
+  // console.log("reservation", reservation);
+  // console.log("params", req.params);
   if (reservation) {
     res.locals.reservation = reservation;
     return next();
@@ -38,16 +50,17 @@ const validProperties = [
   "reservation_date",
   "reservation_time",
   "people",
+  "status",
 ];
 
 // hasValidProperties to create a reservation
 function hasValidProperties(req, res, next) {
+  // console.log("**************VALID PROPERTIES", req.body);
   const { data = {} } = req.body;
-
   const invalidFields = Object.keys(data).filter(
     (field) => !validProperties.includes(field)
   );
-
+  // console.log("invalid fields", invalidFields);
   if (invalidFields.length) {
     return next({
       status: 400,
@@ -58,6 +71,7 @@ function hasValidProperties(req, res, next) {
 }
 
 function dataExists(req, res, next) {
+  // console.log("**************DATA EXISTS", req.body);
   const data = req.body.data;
   if (data) {
     return next();
@@ -66,6 +80,7 @@ function dataExists(req, res, next) {
 }
 
 function reservationDateValidator(req, res, next) {
+  // console.log("**************DATE", req.body);
   const date = req.body.data.reservation_date;
   // if reservation is not a date return 400
   let date_regex = /^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
@@ -181,6 +196,26 @@ function timeConstraintsToCreateReservations(req, res, next) {
         "Reservation time must be at 9:30 pm, or earlier, the restaurant will be closed at 10:30 pm.",
     });
   }
+  // console.log("*****************TIME CONSTRAINT HERE");
+  return next();
+}
+
+// POST validation, returns 400 if status is 'seated'
+function reservationIsSeated(req, res, next) {
+  const reservation = req.body.data;
+  // console.log("************************req.body", req.body.data);
+  if (reservation.status === "seated") {
+    return next({ status: 400, message: "Reservation is seated." });
+  }
+  return next();
+}
+
+// POST validation returns 400 if status is 'finished'
+function reservationIsFinished(req, res, next) {
+  const reservation = req.body.data;
+  if (reservation.status === "finished") {
+    return next({ status: 400, message: "Reservation is finished." });
+  }
   return next();
 }
 
@@ -188,6 +223,58 @@ function timeConstraintsToCreateReservations(req, res, next) {
 async function createReservation(req, res) {
   const data = await service.createReservation(req.body.data);
   res.status(201).json({ data });
+}
+
+// PUT, validation to check if
+// body and id
+async function statusCannotBeFinished(req, res, next) {
+  const { status } = res.locals.reservation;
+  // console.log("status in statusCannotBeFinished*************", status);
+  if (status === "finished") {
+    return next({
+      status: 400,
+      message: "Status cannot be updated if it is finished.",
+    });
+  }
+  return next();
+}
+
+//CHECKS IF A STATUS IS BOOKED, SEATED, OR FINISHED, RETURNING 200
+async function bookedSeatedFinished(req, res, next) {
+  const { status } = req.body.data;
+  // console.log("status from bookedSeatedFinished***********", status);
+  if (status === "booked" || status === "seated" || status === "finished") {
+    return next();
+  }
+  return next({ status: 400 });
+}
+
+// PUT validation
+// status can be booked, seated, finished, if not return next({status:400, message: "unknown status"})
+async function unknownStatus(req, res, next) {
+  const { status } = req.body.data;
+  // console.log("status, unknownStatus*************", status);
+  if (status !== "booked" && status !== "seated" && status !== "finished") {
+    return next({
+      status: 400,
+      message: "unknown status.",
+    });
+  }
+  return next();
+}
+
+// PUT, need an id and body
+// MAY NOT NEED A PUT
+async function update(req, res, next) {
+  const reservation = req.body.data;
+  const { reservationId } = req.params;
+  const updatedReservation = {
+    reservation_id: reservationId,
+    status: reservation.status,
+  };
+  console.log("updatedReservation", updatedReservation);
+  const data = await service.update(updatedReservation);
+  res.json({ data });
 }
 
 module.exports = {
@@ -208,6 +295,15 @@ module.exports = {
     closedOnTuesdaysValidator,
     futureReservationsOnlyValidator,
     timeConstraintsToCreateReservations,
+    reservationIsSeated,
+    reservationIsFinished,
     asyncErrorBoundary(createReservation),
+  ],
+  update: [
+    asyncErrorBoundary(reservationExists),
+    asyncErrorBoundary(unknownStatus),
+    asyncErrorBoundary(statusCannotBeFinished),
+    asyncErrorBoundary(bookedSeatedFinished),
+    asyncErrorBoundary(update),
   ],
 };
