@@ -12,10 +12,10 @@ async function list(req, res) {
     const data = await service.listAllReservationsForOneDate(date);
     return res.json({ data });
   }
-  const {mobile_number} = req.query;
-  if (mobile_number){
-    const data = await service.search(mobile_number)
-    return res.json({data})
+  const { mobile_number } = req.query;
+  if (mobile_number) {
+    const data = await service.search(mobile_number);
+    return res.json({ data });
   }
   const data = await service.list();
   return res.json({ data });
