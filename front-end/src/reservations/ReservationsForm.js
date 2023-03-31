@@ -1,23 +1,21 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
-import { createReservations } from "../utils/api";
+import { createReservations, updateReservation } from "../utils/api";
 
-function ReservationsForm() {
+function ReservationsForm({ initialFormState, isCreateType = true }) {
   const history = useHistory();
-
-  const initialFormState = {
-    first_name: "",
-    last_name: "",
-    mobile_number: "",
-    reservation_date: "",
-    reservation_time: "",
-    people: "",
-  };
+  const params = useParams();
   // useState for state of the reservations form
   const [formData, setFormData] = useState({ ...initialFormState });
   // add a useState for error
   const [error, setError] = useState(null);
+  // use state for edit??
+  // if condition for edit?
+
+  useEffect(() => {
+    setFormData(initialFormState);
+  }, [initialFormState]);
 
   const handleChange = ({ target }) => {
     setFormData({
@@ -26,18 +24,19 @@ function ReservationsForm() {
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleCreate = async (event) => {
     event.preventDefault();
     // call a create function from api.js
     // call with {..reservation, people: Number(reservation.people)}
     async function createNewReservation() {
       try {
-        const newReservation = await createReservations({
+        await createReservations({
           ...formData,
           people: Number(formData.people),
         });
+        // setFormData to
         setFormData({ ...initialFormState });
-        history.push(`/dashboard?date=${newReservation.reservation_date}`);
+        history.push(`/dashboard?date=${formData.reservation_date}`);
       } catch (error) {
         setError(error);
       }
@@ -45,9 +44,32 @@ function ReservationsForm() {
     createNewReservation();
   };
 
+  const handleEdit = async (event) => {
+    event.preventDefault();
+    async function updateOldReservation() {
+      const controller = new AbortController();
+      try {
+        // console.log(formData)
+        // params+> reservation, reservation_id. signal
+        await updateReservation(
+          {
+            ...formData,
+            people: Number(formData.people),
+          },
+          params.reservation_id,
+          controller.signal
+        );
+       history.push(`/dashboard?date=${formData.reservation_date}`);
+      } catch (error) {
+        setError(error);
+      }
+    }
+    updateOldReservation();
+  };
+
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={isCreateType ? handleCreate : handleEdit}>
         <ErrorAlert error={error} />
         <label htmlFor="first_name">
           First Name:

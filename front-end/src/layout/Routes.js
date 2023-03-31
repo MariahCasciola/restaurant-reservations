@@ -9,6 +9,7 @@ import { today } from "../utils/date-time";
 import TablesForm from "../tables/TablesForm";
 import SeatReservationsAtTables from "../tables/SeatReservationsAtTables";
 import SearchBar from "../search/SearchBar";
+import EditReservation from "../reservations/EditReservation";
 
 /**
  * Defines all the routes for the application.
@@ -36,16 +37,28 @@ function Routes() {
         <Dashboard date={date} />
       </Route>
       <Route path="/search">
-        <SearchBar/>
+        <SearchBar />
       </Route>
       <Route path="/reservations/new">
-        <ReservationsForm />
+        <ReservationsForm
+          initialFormState={{
+            first_name: "",
+            last_name: "",
+            mobile_number: "",
+            reservation_date: "",
+            reservation_time: "",
+            people: "",
+          }}
+        />
       </Route>
       <Route path="/tables/new">
         <TablesForm />
       </Route>
       <Route path="/reservations/:reservation_id/seat">
         <SeatReservationsAtTables />
+      </Route>
+      <Route path="/reservations/:reservation_id/edit">
+        <EditReservation />
       </Route>
       <Route>
         <NotFound />

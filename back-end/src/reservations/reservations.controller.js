@@ -3,6 +3,7 @@
  */
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const { first } = require("../db/connection");
 
 async function list(req, res) {
   const { date } = req.query;
@@ -234,22 +235,17 @@ async function statusCannotBeFinished(req, res, next) {
   return next();
 }
 
-//CHECKS IF A STATUS IS BOOKED, SEATED, OR FINISHED, RETURNING 200
-async function bookedSeatedFinished(req, res, next) {
-  const { status } = req.body.data;
-  // console.log("status from bookedSeatedFinished***********", status);
-  if (status === "booked" || status === "seated" || status === "finished") {
-    return next();
-  }
-  return next({ status: 400 });
-}
-
 // PUT validation
 // status can be booked, seated, finished, if not return next({status:400, message: "unknown status"})
 async function unknownStatus(req, res, next) {
   const { status } = req.body.data;
   // console.log("status, unknownStatus*************", status);
-  if (status !== "booked" && status !== "seated" && status !== "finished") {
+  if (
+    status !== "booked" &&
+    status !== "seated" &&
+    status !== "finished" &&
+    status !== "cancelled"
+  ) {
     return next({
       status: 400,
       message: "unknown status.",
@@ -258,16 +254,105 @@ async function unknownStatus(req, res, next) {
   return next();
 }
 
+// update status to "cancelled", validation first_name, 400 missing or empty
+function firstNameValid(req, res, next) {
+  const { first_name } = req.body.data;
+  if (!first_name) {
+    console.log(req.body)
+    return next({
+      status: 400,
+      message: "first_name missing, or does not exist",
+    });
+  }
+  return next();
+}
+
+// update status to "cancelled", validation last_name, 400 missing or empty
+function lastNameValid(req, res, next) {
+  const { last_name } = req.body.data;
+  if (!last_name) {
+    return next({
+      status: 400,
+      message: "last_name missing, or does not exist",
+    });
+  }
+  return next();
+}
+
+// update status to "cancelled", validation first_name, 400 missing or empty
+function mobileNumberValid(req, res, next) {
+  const { mobile_number } = req.body.data;
+  if (!mobile_number) {
+    return next({
+      status: 400,
+      message: "mobile_number missing, or does not exist",
+    });
+  }
+  return next();
+}
+
+// update status to "cancelled", validation reservation_date, 400 missing or empty, or not a date
+function reservationDateValid(req, res, next) {
+  const date = req.body.data.reservation_date;
+  let date_regex = /^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
+  if (date && date_regex.test(date)) {
+    return next();
+  }
+  return next({
+    status: 400,
+    message: "reservation_date is a required field, and must be a date",
+  });
+}
+
+function reservationTimeValid(req, res, next) {
+  const time = req.body.data.reservation_time;
+  let time_regex = /^(2[0-3]|[01]?[0-9]):[0-5][0-9]$/;
+  if (time && time_regex.test(time)) {
+    return next();
+  }
+  next({ status: 400, message: "reservation_time must be a time" });
+}
+
+function peopleValid(req, res, next) {
+  const { people } = req.body.data;
+  // if people is not a number
+  if (!Number.isInteger(people) || people === 0) {
+    return next({
+      status: 400,
+      message:
+        "people field must contain a number, and must greater than zero.",
+    });
+  }
+  return next();
+}
+
 // PUT, need an id and body
-// MAY NOT NEED A PUT
+// update a
 async function update(req, res, next) {
   const reservation = req.body.data;
+  // console.log("***************", reservation.status);
   const { reservationId } = req.params;
   const updatedReservation = {
     reservation_id: reservationId,
     status: reservation.status,
   };
-  console.log("updatedReservation", updatedReservation);
+  const data = await service.update(updatedReservation);
+  res.json({ data });
+}
+
+async function updateEditReservation(req, res, next) {
+  const reservation = req.body.data;
+  const { reservationId } = req.params;
+  const updatedReservation = {
+    reservation_id: reservationId,
+    first_name: reservation.first_name,
+    last_name: reservation.last_name,
+    mobile_number: reservation.mobile_number,
+    reservation_date: reservation.reservation_date,
+    reservation_time: reservation.reservation_time,
+    people: reservation.people,
+    status: reservation.status,
+  };
   const data = await service.update(updatedReservation);
   res.json({ data });
 }
@@ -294,11 +379,21 @@ module.exports = {
     reservationIsFinished,
     asyncErrorBoundary(createReservation),
   ],
+  //  /status
   update: [
     asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(unknownStatus),
     asyncErrorBoundary(statusCannotBeFinished),
-    asyncErrorBoundary(bookedSeatedFinished),
     asyncErrorBoundary(update),
+  ],
+  updateEditReservation: [
+    asyncErrorBoundary(reservationExists),
+    firstNameValid,
+    lastNameValid,
+    mobileNumberValid,
+    reservationDateValid,
+    reservationTimeValid,
+    peopleValid,
+    asyncErrorBoundary(updateEditReservation),
   ],
 };
