@@ -24,8 +24,6 @@ async function list(req, res) {
 
 async function reservationExists(req, res, next) {
   const reservation = await service.read(req.params.reservationId);
-  // console.log("reservation", reservation);
-  // console.log("params", req.params);
   if (reservation) {
     res.locals.reservation = reservation;
     return next();
@@ -51,7 +49,6 @@ const validProperties = [
 
 // hasValidProperties to create a reservation
 function hasValidProperties(req, res, next) {
-  // console.log("**************VALID PROPERTIES", req.body);
   const { data = {} } = req.body;
   const invalidFields = Object.keys(data).filter(
     (field) => !validProperties.includes(field)
@@ -67,7 +64,6 @@ function hasValidProperties(req, res, next) {
 }
 
 function dataExists(req, res, next) {
-  // console.log("**************DATA EXISTS", req.body);
   const data = req.body.data;
   if (data) {
     return next();
@@ -76,7 +72,6 @@ function dataExists(req, res, next) {
 }
 
 function reservationDateValidator(req, res, next) {
-  // console.log("**************DATE", req.body);
   const date = req.body.data.reservation_date;
   // if reservation is not a date return 400
   let date_regex = /^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
@@ -192,14 +187,12 @@ function timeConstraintsToCreateReservations(req, res, next) {
         "Reservation time must be at 9:30 pm, or earlier, the restaurant will be closed at 10:30 pm.",
     });
   }
-  // console.log("*****************TIME CONSTRAINT HERE");
   return next();
 }
 
 // POST validation, returns 400 if status is 'seated'
 function reservationIsSeated(req, res, next) {
   const reservation = req.body.data;
-  // console.log("************************req.body", req.body.data);
   if (reservation.status === "seated") {
     return next({ status: 400, message: "Reservation is seated." });
   }
@@ -225,7 +218,6 @@ async function createReservation(req, res) {
 // body and id
 async function statusCannotBeFinished(req, res, next) {
   const { status } = res.locals.reservation;
-  // console.log("status in statusCannotBeFinished*************", status);
   if (status === "finished") {
     return next({
       status: 400,
@@ -239,7 +231,6 @@ async function statusCannotBeFinished(req, res, next) {
 // status can be booked, seated, finished, if not return next({status:400, message: "unknown status"})
 async function unknownStatus(req, res, next) {
   const { status } = req.body.data;
-  // console.log("status, unknownStatus*************", status);
   if (
     status !== "booked" &&
     status !== "seated" &&
@@ -258,7 +249,6 @@ async function unknownStatus(req, res, next) {
 function firstNameValid(req, res, next) {
   const { first_name } = req.body.data;
   if (!first_name) {
-    console.log(req.body)
     return next({
       status: 400,
       message: "first_name missing, or does not exist",
@@ -330,7 +320,6 @@ function peopleValid(req, res, next) {
 // update a
 async function update(req, res, next) {
   const reservation = req.body.data;
-  // console.log("***************", reservation.status);
   const { reservationId } = req.params;
   const updatedReservation = {
     reservation_id: reservationId,
