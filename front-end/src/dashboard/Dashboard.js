@@ -30,12 +30,17 @@ function Dashboard({ date }) {
     setReservationsError(null);
     // list reservations
     listReservations({ date }, abortController.signal)
+      .then((list) =>
+        list.filter(
+          (reservation) =>
+            reservation.status !== "cancelled" &&
+            reservation.status !== "finished"
+        )
+      )
       .then(setReservations)
       .catch(setReservationsError);
-      // list tables
-    listTables(abortController.signal)
-      .then(setTables)
-      .catch(setTablesError);
+    // list tables
+    listTables(abortController.signal).then(setTables).catch(setTablesError);
     return () => abortController.abort();
   }
 
@@ -61,16 +66,25 @@ function Dashboard({ date }) {
   return (
     <main>
       <h1>Dashboard</h1>
-      <button onClick={getPreviousDate}>Previous</button>
-      <button onClick={getTodayDate}>Today</button>
-      <button onClick={getNextDate}>Next</button>
+      <button onClick={getPreviousDate} className="btn btn-outline-info">
+        Previous
+      </button>
+      <button onClick={getTodayDate} className="btn btn-outline-info">
+        Today
+      </button>
+      <button onClick={getNextDate} className="btn btn-outline-info">
+        Next
+      </button>
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Reservations for {date}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
-      <ErrorAlert error={tablesError}/>
-      <ListReservationsOneDate reservations={reservations}/>
-      <ListTables tables={tables} loadDashboard={loadDashboard}/>
+      <ErrorAlert error={tablesError} />
+      <ListReservationsOneDate
+        reservations={reservations}
+        loadDashboard={loadDashboard}
+      />
+      <ListTables tables={tables} loadDashboard={loadDashboard} />
       {/* {JSON.stringify(tables)} */}
     </main>
   );

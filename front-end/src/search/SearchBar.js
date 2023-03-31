@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ErrorAlert from "../layout/ErrorAlert";
 import ListReservationsOneDate from "../reservations/ListReservationsOneDate";
 import { listReservations } from "../utils/api";
 
@@ -40,7 +41,7 @@ function Search() {
         setSearchedReservations(reservationsByNumber);
       } catch (error) {
         setError(error);
-        console.log(error)
+        console.log(error);
       }
     }
     listFoundReservations();
@@ -48,6 +49,7 @@ function Search() {
 
   return (
     <div>
+      <ErrorAlert error={error} />
       <form onSubmit={handleSubmit}>
         Find a reservation by phone number:
         <input
@@ -58,9 +60,11 @@ function Search() {
           placeholder="Enter a customer's phone number"
         ></input>
         <button type="submit">Find</button>
-  {!searchedReservations || !searchedReservations.length ?
-  ("No reservations found"):(<ListReservationsOneDate reservations={searchedReservations} />)
-}
+        {!searchedReservations || !searchedReservations.length ? (
+          "No reservations found"
+        ) : (
+          <ListReservationsOneDate reservations={searchedReservations} />
+        )}
       </form>
     </div>
   );

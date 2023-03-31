@@ -2,8 +2,8 @@
  * Defines the base URL for the API.
  * The default values is overridden by the `API_BASE_URL` environment variable.
  */
-import formatReservationDate from "./format-reservation-date";
-import formatReservationTime from "./format-reservation-date";
+import formatReservationDate, { formatDate } from "./format-reservation-date";
+import formatReservationTime, { formatTime } from "./format-reservation-time";
 
 const API_BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:5001";
@@ -68,6 +68,23 @@ export async function listReservations(params, signal) {
     .then(formatReservationTime);
 }
 
+// optional AbortController.signal
+export async function readReservation(reservation_id, signal) {
+  const url = `${API_BASE_URL}/reservations/${reservation_id}`;
+  return await fetchJson(url, { signal }, {})
+    .then(formatDate)
+    .then(formatTime)
+    .then(removeBadFields);
+}
+
+// helper function to remove bad fields from request
+function removeBadFields(reservation) {
+  reservation.reservation_id = null;
+  reservation.created_at = null;
+  reservation.updated_at = null;
+  return reservation;
+}
+
 // list tables
 export async function listTables(signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
@@ -104,6 +121,29 @@ export async function updateTable(reservation_id, table_id, signal) {
     method: "PUT",
     headers,
     body: JSON.stringify({ data: { reservation_id } }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+export async function updateReservation(reservation, reservation_id, signal) {
+  const url = `${API_BASE_URL}/reservations/${reservation_id}`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: reservation }),
+    signal,
+  };
+  return await fetchJson(url, options);
+}
+
+// cancel reservation
+export async function cancelReservation(reservation_id, signal) {
+  const url = `${API_BASE_URL}/reservations/${reservation_id}/status`;
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({ data: { status: "cancelled" } }),
     signal,
   };
   return await fetchJson(url, options);
