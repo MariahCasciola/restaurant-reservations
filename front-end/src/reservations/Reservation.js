@@ -13,7 +13,7 @@ function Reservation({ reservation, loadDashboard }) {
     people = "",
   } = reservation;
 
-  const cancelled = (event) => {
+  const cancelled = async (event) => {
     const reservation_id = event.target.getAttribute(
       "data-reservation-id-cancel"
     );
@@ -26,7 +26,13 @@ function Reservation({ reservation, loadDashboard }) {
       // PUT request to /reservations/:reservation_id/status with a body of {data: { status: "cancelled" } }
       // results on the page are refreshed
       const controller = new AbortController();
-      cancelReservation(reservation_id, controller.signal).then(loadDashboard);
+      try {
+        await cancelReservation(reservation_id, controller.signal);
+        await loadDashboard();
+      } catch (error) {
+        console.log(error);
+      }
+      return controller.abort();
     }
   };
 

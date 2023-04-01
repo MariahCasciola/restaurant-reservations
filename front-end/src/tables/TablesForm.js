@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import { createTable } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function TablesForm() {
   const history = useHistory();
@@ -9,7 +10,8 @@ function TablesForm() {
     capacity: "",
   };
 
-  const [formData, setFormData] = useState({...initialFormState});
+  const [formData, setFormData] = useState({ ...initialFormState });
+  const [error, setError] = useState(null);
 
   const handleChange = ({ target }) => {
     setFormData({
@@ -29,7 +31,7 @@ function TablesForm() {
         setFormData({ ...initialFormState });
         history.push(`/dashboard`);
       } catch (error) {
-        // console.log(error)
+        setError(error);
       }
     }
     addTable();
@@ -37,6 +39,7 @@ function TablesForm() {
 
   return (
     <form onSubmit={handleSubmit}>
+      <ErrorAlert error={error} />
       <label htmlFor="table_name">
         Table:
         <input
