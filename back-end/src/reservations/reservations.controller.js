@@ -3,7 +3,7 @@
  */
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
-const { first } = require("../db/connection");
+// const { first } = require("../db/connection");
 
 async function list(req, res) {
   const { date } = req.query;
@@ -88,15 +88,6 @@ function reservationTimeValidator(req, res, next) {
     return next();
   }
   next({ status: 400, message: "reservation_time must be a time" });
-}
-
-function peopleValidator(req, res, next) {
-  const { people } = req.body.data;
-  // if people is not a number
-  if (!Number.isInteger(people)) {
-    return next({ status: 400, message: "people field must contain a number" });
-  }
-  return next();
 }
 
 // checks if certain properties exist
@@ -194,7 +185,10 @@ function timeConstraintsToCreateReservations(req, res, next) {
 function reservationIsSeated(req, res, next) {
   const reservation = req.body.data;
   if (reservation.status === "seated") {
-    return next({ status: 400, message: "Reservation is seated." });
+    return next({
+      status: 400,
+      message: "Cannot created a reservation with a status of seated.",
+    });
   }
   return next();
 }
@@ -203,7 +197,10 @@ function reservationIsSeated(req, res, next) {
 function reservationIsFinished(req, res, next) {
   const reservation = req.body.data;
   if (reservation.status === "finished") {
-    return next({ status: 400, message: "Reservation is finished." });
+    return next({
+      status: 400,
+      message: "Cannot created a reservation with a status of seated.",
+    });
   }
   return next();
 }
@@ -216,7 +213,7 @@ async function createReservation(req, res) {
 
 // PUT, validation to check if
 // body and id
-async function statusCannotBeFinished(req, res, next) {
+function statusCannotBeFinished(req, res, next) {
   const { status } = res.locals.reservation;
   if (status === "finished") {
     return next({
@@ -272,13 +269,16 @@ function lastNameValid(req, res, next) {
 // update status to "cancelled", validation first_name, 400 missing or empty
 function mobileNumberValid(req, res, next) {
   const { mobile_number } = req.body.data;
-  if (!mobile_number) {
-    return next({
-      status: 400,
-      message: "mobile_number missing, or does not exist",
-    });
+  const mobile_number_regex = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+  // console.log("************", req.body)
+  if (mobile_number && mobile_number_regex.test(mobile_number)) {
+    return next();
   }
-  return next();
+  return next({
+    status: 400,
+    message:
+      "mobile_number missing, does not exist, or needs to consist of numbers",
+  });
 }
 
 // update status to "cancelled", validation reservation_date, 400 missing or empty, or not a date
@@ -306,11 +306,11 @@ function reservationTimeValid(req, res, next) {
 function peopleValid(req, res, next) {
   const { people } = req.body.data;
   // if people is not a number
-  if (!Number.isInteger(people) || people === 0) {
+  if (!Number.isInteger(people) || Math.sign(people) === -1 || people === 0) {
     return next({
       status: 400,
       message:
-        "people field must contain a number, and must greater than zero.",
+        "people field must contain a number, and must be greater than zero.",
     });
   }
   return next();
@@ -355,12 +355,13 @@ module.exports = {
     hasProperties("first_name"),
     hasProperties("last_name"),
     hasProperties("mobile_number"),
+    mobileNumberValid,
     hasProperties("reservation_date"),
     hasProperties("reservation_time"),
     hasProperties("people"),
     reservationDateValidator,
     reservationTimeValidator,
-    peopleValidator,
+    peopleValid,
     closedOnTuesdaysValidator,
     futureReservationsOnlyValidator,
     timeConstraintsToCreateReservations,
@@ -372,7 +373,7 @@ module.exports = {
   update: [
     asyncErrorBoundary(reservationExists),
     asyncErrorBoundary(unknownStatus),
-    asyncErrorBoundary(statusCannotBeFinished),
+    statusCannotBeFinished,
     asyncErrorBoundary(update),
   ],
   updateEditReservation: [
@@ -381,7 +382,10 @@ module.exports = {
     lastNameValid,
     mobileNumberValid,
     reservationDateValid,
+    futureReservationsOnlyValidator,
+    closedOnTuesdaysValidator,
     reservationTimeValid,
+    timeConstraintsToCreateReservations,
     peopleValid,
     asyncErrorBoundary(updateEditReservation),
   ],

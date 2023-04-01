@@ -95,16 +95,16 @@ async function create(req, res, next) {
 }
 
 // validate data exists, middleware for update function
-function dataExists(req, res, next) {
-  const data = req.body.data;
+async function dataExists(req, res, next) {
+  const data = await req.body.data;
   if (data) {
     return next();
   }
   return next({ status: 400, message: "There is no data" });
 }
 
-function reservationIdMissing(req, res, next) {
-  const { reservation_id } = req.body.data;
+async function reservationIdMissing(req, res, next) {
+  const { reservation_id } = await req.body.data;
   if (!reservation_id) {
     return next({ status: 400, message: "reservation_id does not exist." });
   }
@@ -207,8 +207,8 @@ module.exports = {
     asyncErrorBoundary(create),
   ],
   update: [
-    dataExists,
-    reservationIdMissing,
+    asyncErrorBoundary(dataExists),
+    asyncErrorBoundary(reservationIdMissing),
     asyncErrorBoundary(tableExists),
     asyncErrorBoundary(reservationExists),
     capacitySufficientValidator,
