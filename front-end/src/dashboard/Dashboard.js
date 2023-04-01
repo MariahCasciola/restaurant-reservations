@@ -23,15 +23,22 @@ function Dashboard({ date }) {
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
 
-  useEffect(loadDashboard, [date]);
+  useEffect(loadReservations, [date]);
+  useEffect(loadTables, []);
 
-  function loadDashboard() {
+  async function loadDashboard() {
+    loadReservations();
+    loadTables();
+  }
+
+  function loadReservations() {
+    // console.log("Now loading reservations")
     const abortController = new AbortController();
     setReservationsError(null);
     // list reservations
     listReservations({ date }, abortController.signal)
-      .then((list) =>
-        list.filter(
+      .then((response) =>
+        response.filter(
           (reservation) =>
             reservation.status !== "cancelled" &&
             reservation.status !== "finished"
@@ -39,7 +46,12 @@ function Dashboard({ date }) {
       )
       .then(setReservations)
       .catch(setReservationsError);
-    // list tables
+    return () => abortController.abort();
+  }
+
+  function loadTables() {
+    const abortController = new AbortController();
+    setTablesError(null);
     listTables(abortController.signal).then(setTables).catch(setTablesError);
     return () => abortController.abort();
   }

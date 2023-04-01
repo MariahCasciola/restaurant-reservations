@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { deleteTable } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function Table({ table, loadDashboard }) {
   const { table_name = "", capacity = "" } = table;
+  const [error, setError] = useState(null);
 
   const handleFinishTable = () => {
     const confirmed = window.confirm(
@@ -18,13 +20,14 @@ function Table({ table, loadDashboard }) {
           })
           .then(loadDashboard);
       } catch (error) {
-        // console.log("error", error);
+        setError(error);
       }
     }
   };
 
   return (
     <div>
+      <ErrorAlert error={error} />
       <div>Table: {table_name}</div>
       <div>Capacity: {capacity}</div>
       {!table.reservation_id ? (

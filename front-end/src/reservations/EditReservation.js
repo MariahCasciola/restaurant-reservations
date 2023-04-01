@@ -38,7 +38,6 @@ function EditReservation() {
       <ReservationsForm
         initialFormState={editFormState}
         isCreateType={false}
-        handleSubmit={() => console.log("Do something fruity")}
       />
     </div>
   );
