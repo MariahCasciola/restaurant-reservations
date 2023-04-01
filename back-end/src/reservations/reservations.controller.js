@@ -199,7 +199,7 @@ function reservationIsFinished(req, res, next) {
   if (reservation.status === "finished") {
     return next({
       status: 400,
-      message: "Cannot created a reservation with a status of seated.",
+      message: "Cannot created a reservation with a status of finished.",
     });
   }
   return next();
