@@ -48,23 +48,34 @@ function Search() {
   };
 
   return (
-    <div>
+    <div className="container text-center">
       <ErrorAlert error={error} />
       <form onSubmit={handleSubmit}>
-        Find a reservation by phone number:
-        <input
-          name="mobile_number"
-          type="text"
-          onChange={handleChange}
-          value={formData.mobile_number}
-          placeholder="Enter a customer's phone number"
-        ></input>
-        <button type="submit">Find</button>
-        {!searchedReservations || !searchedReservations.length ? (
-          "No reservations found"
-        ) : (
-          <ListReservationsOneDate reservations={searchedReservations} />
-        )}
+        <div className="mb-3">
+          <label className="form-label">
+            <h1>Find a Reservation</h1>
+            <input
+              className="form-control"
+              name="mobile_number"
+              type="text"
+              onChange={handleChange}
+              value={formData.mobile_number}
+              placeholder="Enter a customer's phone number"
+            />
+          </label>
+        </div>
+        <div>
+          <button className="btn btn-outline-info" type="submit">
+            Find
+          </button>
+        </div>
+        <div>
+          {!searchedReservations || !searchedReservations.length ? (
+            "No reservations found"
+          ) : (
+            <ListReservationsOneDate reservations={searchedReservations} />
+          )}
+        </div>
       </form>
     </div>
   );

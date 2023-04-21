@@ -76,29 +76,31 @@ function Dashboard({ date }) {
   };
 
   return (
-    <main>
-      <h1>Dashboard</h1>
-      <button onClick={getPreviousDate} className="btn btn-outline-info">
-        Previous
-      </button>
-      <button onClick={getTodayDate} className="btn btn-outline-info">
-        Today
-      </button>
-      <button onClick={getNextDate} className="btn btn-outline-info">
-        Next
-      </button>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for {date}</h4>
-      </div>
-      <ErrorAlert error={reservationsError} />
-      <ErrorAlert error={tablesError} />
-      <ListReservationsOneDate
-        reservations={reservations}
-        loadDashboard={loadDashboard}
-      />
-      <ListTables tables={tables} loadDashboard={loadDashboard} />
-      {/* {JSON.stringify(tables)} */}
-    </main>
+    <div className="container text-center">
+      <main>
+        <h1>Dashboard</h1>
+        <button onClick={getPreviousDate} className="btn btn-outline-info">
+          Previous
+        </button>
+        <button onClick={getTodayDate} className="btn btn-outline-info">
+          Today
+        </button>
+        <button onClick={getNextDate} className="btn btn-outline-info">
+          Next
+        </button>
+        <div>
+          <h4 className="mb-0">Reservations for {date}</h4>
+        </div>
+        <ErrorAlert error={reservationsError} />
+        <ErrorAlert error={tablesError} />
+        <ListReservationsOneDate
+          reservations={reservations}
+          loadDashboard={loadDashboard}
+        />
+        <ListTables tables={tables} loadDashboard={loadDashboard} />
+        {/* {JSON.stringify(tables)} */}
+      </main>
+    </div>
   );
 }
 
