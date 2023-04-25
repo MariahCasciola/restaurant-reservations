@@ -38,7 +38,7 @@ function Reservation({ reservation, loadDashboard }) {
 
   return (
     <tbody>
-      <tr className="">
+      <tr>
         <td>{first_name}</td>
         <td> {last_name}</td>
         <td>{mobile_number}</td>
@@ -51,7 +51,7 @@ function Reservation({ reservation, loadDashboard }) {
         {reservation.status === "booked" ? (
           <td>
             <Link
-              className=""
+              className="btn btn-outline-info btn-small"
               to={`/reservations/${reservation.reservation_id}/seat`}
             >
               Seat
@@ -61,8 +61,8 @@ function Reservation({ reservation, loadDashboard }) {
         <EditButton reservation={reservation} />
         <td>
           <button
+            className="btn btn-outline-danger"
             data-reservation-id-cancel={reservation.reservation_id}
-            className=""
             onClick={cancelled}
           >
             Cancel

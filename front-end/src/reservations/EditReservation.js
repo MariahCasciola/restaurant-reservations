@@ -34,7 +34,7 @@ function EditReservation() {
   return (
     <div>
       <ErrorAlert error={editError} />
-      <div>Edit Reservation</div>
+      <h1 className="containter text-center">Edit Reservation</h1>
       <ReservationsForm
         initialFormState={editFormState}
         isCreateType={false}

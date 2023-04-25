@@ -51,6 +51,7 @@ function TablesForm() {
               type="text"
               onChange={handleChange}
               value={formData.table_name}
+              placeholder="Table Name"
             />
           </label>
         </div>
@@ -63,6 +64,7 @@ function TablesForm() {
               type="number"
               onChange={handleChange}
               value={formData.capacity}
+              placeholder="Capacity"
             />
           </label>
         </div>

@@ -11,7 +11,7 @@ function SeatReservationsAtTables() {
   // for handle submit update table
   const [selectedTableId, setSelectedTableId] = useState("");
   // for error message for when a reservation cannot be seated at an occupied table
-  const [tablesError, setTablesError] = useState(null)
+  const [tablesError, setTablesError] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -31,7 +31,6 @@ function SeatReservationsAtTables() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // console.log("event.target", event.target);
     const controller = new AbortController();
     // get table.table_id from tables
     async function seatTable() {
@@ -45,7 +44,7 @@ function SeatReservationsAtTables() {
         // parameters for reservation_id, table_id, signal
         // params = reservation_id
       } catch (error) {
-        setTablesError(error)
+        setTablesError(error);
       }
     }
     await seatTable();
@@ -55,33 +54,40 @@ function SeatReservationsAtTables() {
   const handleChangeSelectState = ({ target }) => {
     console.log(target.value);
     setSelectedTableId(target.value);
-    // console.log(selectState);
   };
 
   // map each table into a table option
   return (
-    <div>
-      <ErrorAlert error={tablesError}/>
+    <div className="container text-center">
+      <ErrorAlert error={tablesError} />
+      <h1>Choose a Table</h1>
       <form onSubmit={handleSubmit}>
-        <label>
-          choose table
-          <select
-            id="table_id"
-            name="table_id"
-            value={selectedTableId}
-            onChange={handleChangeSelectState}
-          >
-            {tables.map((table, index) => {
-              return (
-                <option value={table.table_id} key={index}>
-                  {table.table_name} - {table.capacity}
-                </option>
-              );
-            })}
-          </select>
-        </label>
-        <button type="submit">Submit</button>
-        <button type="button" onClick={() => history.goBack()}>
+        <div className="mb-3">
+          <label className="form-label">
+            <select
+              id="table_id"
+              name="table_id"
+              value={selectedTableId}
+              onChange={handleChangeSelectState}
+            >
+              {tables.map((table, index) => {
+                return (
+                  <option value={table.table_id} key={index}>
+                    {table.table_name} - {table.capacity}
+                  </option>
+                );
+              })}
+            </select>
+          </label>
+        </div>
+        <button className="btn btn-outline-info" type="submit">
+          Submit
+        </button>
+        <button
+          className="btn btn-outline-danger"
+          type="button"
+          onClick={() => history.goBack()}
+        >
           Cancel
         </button>
       </form>

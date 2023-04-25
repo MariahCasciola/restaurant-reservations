@@ -69,7 +69,7 @@ function ReservationsForm({ initialFormState, isCreateType = true }) {
 
   return (
     <div className="container text-center">
-      <h1>Create a reservation</h1>
+      {isCreateType ? <h1>Create a reservation</h1> : null}
       <form onSubmit={isCreateType ? handleCreate : handleEdit}>
         <ErrorAlert error={error} />
         <div className="mb-3">
@@ -81,6 +81,7 @@ function ReservationsForm({ initialFormState, isCreateType = true }) {
               type="text"
               onChange={handleChange}
               value={formData.first_name}
+              placeholder="First Name"
             />
           </label>
         </div>
@@ -93,18 +94,20 @@ function ReservationsForm({ initialFormState, isCreateType = true }) {
               type="text"
               onChange={handleChange}
               value={formData.last_name}
+              placeholder="Last Name"
             />
           </label>
         </div>
         <div className="mb-3">
           <label className="form-label" htmlFor="mobile_number">
-            Mobile number:
+            Phone number:
             <input
               className="form-control"
               name="mobile_number"
               type="text"
               onChange={handleChange}
               value={formData.mobile_number}
+              placeholder="Phone Number"
             />
           </label>
         </div>
@@ -141,6 +144,7 @@ function ReservationsForm({ initialFormState, isCreateType = true }) {
               type="number"
               onChange={handleChange}
               value={formData.people}
+              placeholder="Number of people"
             />
           </label>
         </div>
