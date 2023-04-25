@@ -1,12 +1,36 @@
-Deployed front-end project on Render:
-Deployed backend project on Render:
+# Restaurant Reservations App
 
-How to run this on your local machine:
+## Front-end deployment on [Render](https://restaurant-res-frotn-end.onrender.com)
 
--Download project
+## Backend deployment on [Render](https://restaurant-reservation-v9k1.onrender.com)
 
--In /backend/.env there are links to ElephantSQL databases
+    Technology: ReactJS, Bootstrap, ElephantSQL, Node, Express, Knex, Puppeter, git, and Node.
 
--In the terminal of your code edittor: npm run start:dev in root directory to run the front-end and backend concurrently
+# Installation
 
--
+Run ```cd ./back-end```
+
+Update the ```./back-end/.env``` file with the connection URL's to the database instance you have chosen.
+
+```npx knex```
+
+```npm install```
+## Run the app
+Run ```npm run start:dev``` to run front-end and back-end concurrently
+## Run tests
+
+# REST API
+
+Paths for restaurtant API:
+
+```GET /reservations```
+
+```PUT /reservations/:reservationsId```
+
+```PUT /reservations/:reservationsId/status```
+
+```GET /tables```
+
+```POST /tables/tables_id```
+
+```PUT /tables/seat```

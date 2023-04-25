@@ -26,24 +26,28 @@ function Table({ table, loadDashboard }) {
   };
 
   return (
-    <div>
-      <ErrorAlert error={error} />
-      <div>Table: {table_name}</div>
-      <div>Capacity: {capacity}</div>
-      {!table.reservation_id ? (
-        <div data-table-id-status={table.table_id}>FREE</div>
-      ) : (
-        <div>
-          <div data-table-id-status={table.table_id}>OCCUPIED</div>
-          <button
-            data-table-id-finish={table.table_id}
-            onClick={handleFinishTable}
-          >
-            Finish
-          </button>
-        </div>
-      )}
-    </div>
+    <tbody>
+      <tr>
+        <ErrorAlert error={error} />
+        <td>{table_name}</td>
+        <td>{capacity}</td>
+        <td>
+          {!table.reservation_id ? (
+            <div data-table-id-status={table.table_id}>FREE</div>
+          ) : (
+            <div>
+              <div data-table-id-status={table.table_id}>OCCUPIED</div>
+              <button
+                data-table-id-finish={table.table_id}
+                onClick={handleFinishTable}
+              >
+                Finish
+              </button>
+            </div>
+          )}
+        </td>
+      </tr>
+    </tbody>
   );
 }
 

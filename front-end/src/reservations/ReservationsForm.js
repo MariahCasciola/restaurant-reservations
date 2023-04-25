@@ -59,7 +59,7 @@ function ReservationsForm({ initialFormState, isCreateType = true }) {
           params.reservation_id,
           controller.signal
         );
-       history.push(`/dashboard?date=${formData.reservation_date}`);
+        history.push(`/dashboard?date=${formData.reservation_date}`);
       } catch (error) {
         setError(error);
       }
@@ -68,65 +68,94 @@ function ReservationsForm({ initialFormState, isCreateType = true }) {
   };
 
   return (
-    <div>
+    <div className="container text-center">
+      {isCreateType ? <h1>Create a reservation</h1> : null}
       <form onSubmit={isCreateType ? handleCreate : handleEdit}>
         <ErrorAlert error={error} />
-        <label htmlFor="first_name">
-          First Name:
-          <input
-            name="first_name"
-            type="text"
-            onChange={handleChange}
-            value={formData.first_name}
-          />
-        </label>
-        <label htmlFor="last_name">
-          Last Name:
-          <input
-            name="last_name"
-            type="text"
-            onChange={handleChange}
-            value={formData.last_name}
-          />
-        </label>
-        <label htmlFor="mobile_number">
-          Mobile number:
-          <input
-            name="mobile_number"
-            type="text"
-            onChange={handleChange}
-            value={formData.mobile_number}
-          />
-        </label>
-        <label htmlFor="reservation_date">
-          Date of reservation :
-          <input
-            name="reservation_date"
-            type="date"
-            onChange={handleChange}
-            value={formData.reservation_date}
-          />
-        </label>
-        <label htmlFor="reservation_time">
-          Time of reservation:
-          <input
-            name="reservation_time"
-            type="time"
-            onChange={handleChange}
-            value={formData.reservation_time}
-          />
-        </label>
-        <label htmlFor="people">
-          Number of People:
-          <input
-            name="people"
-            type="number"
-            onChange={handleChange}
-            value={formData.people}
-          />
-        </label>
-        <button type="submit">Submit</button>
-        <button type="button" onClick={() => history.goBack()}>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="first_name">
+            First Name:
+            <input
+              className="form-control"
+              name="first_name"
+              type="text"
+              onChange={handleChange}
+              value={formData.first_name}
+              placeholder="First Name"
+            />
+          </label>
+        </div>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="last_name">
+            Last Name:
+            <input
+              className="form-control"
+              name="last_name"
+              type="text"
+              onChange={handleChange}
+              value={formData.last_name}
+              placeholder="Last Name"
+            />
+          </label>
+        </div>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="mobile_number">
+            Phone number:
+            <input
+              className="form-control"
+              name="mobile_number"
+              type="text"
+              onChange={handleChange}
+              value={formData.mobile_number}
+              placeholder="Phone Number"
+            />
+          </label>
+        </div>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="reservation_date">
+            Date of reservation :
+            <input
+              className="form-control"
+              name="reservation_date"
+              type="date"
+              onChange={handleChange}
+              value={formData.reservation_date}
+            />
+          </label>
+        </div>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="reservation_time">
+            Time of reservation:
+            <input
+              className="form-control"
+              name="reservation_time"
+              type="time"
+              onChange={handleChange}
+              value={formData.reservation_time}
+            />
+          </label>
+        </div>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="people">
+            Number of People:
+            <input
+              className="form-control"
+              name="people"
+              type="number"
+              onChange={handleChange}
+              value={formData.people}
+              placeholder="Number of people"
+            />
+          </label>
+        </div>
+        <button type="submit" className="btn btn-outline-info">
+          Submit
+        </button>
+        <button
+          type="button"
+          className="btn btn-outline-danger"
+          onClick={() => history.goBack()}
+        >
           Cancel
         </button>
       </form>

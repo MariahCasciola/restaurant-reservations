@@ -38,31 +38,48 @@ function TablesForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <ErrorAlert error={error} />
-      <label htmlFor="table_name">
-        Table:
-        <input
-          name="table_name"
-          type="text"
-          onChange={handleChange}
-          value={formData.table_name}
-        />
-      </label>
-      Capacity:
-      <label htmlFor="capacity">
-        <input
-          name="capacity"
-          type="number"
-          onChange={handleChange}
-          value={formData.capacity}
-        />
-      </label>
-      <button type="submit">Submit</button>
-      <button type="button" onClick={() => history.goBack()}>
-        Cancel
-      </button>
-    </form>
+    <div className="container text-center">
+      <h1>Create a Table</h1>
+      <form onSubmit={handleSubmit}>
+        <ErrorAlert error={error} />
+        <div className="mb-3">
+          <label className="form-label" htmlFor="table_name">
+            Table:
+            <input
+              className="form-control"
+              name="table_name"
+              type="text"
+              onChange={handleChange}
+              value={formData.table_name}
+              placeholder="Table Name"
+            />
+          </label>
+        </div>
+        <div className="mb-3">
+          <label className="form-label" htmlFor="capacity">
+            Capacity:
+            <input
+              className="form-control"
+              name="capacity"
+              type="number"
+              onChange={handleChange}
+              value={formData.capacity}
+              placeholder="Capacity"
+            />
+          </label>
+        </div>
+        <button className="btn btn-outline-info" type="submit">
+          Submit
+        </button>
+        <button
+          className="btn btn-outline-danger"
+          type="button"
+          onClick={() => history.goBack()}
+        >
+          Cancel
+        </button>
+      </form>
+    </div>
   );
 }
 

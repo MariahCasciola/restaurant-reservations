@@ -37,36 +37,39 @@ function Reservation({ reservation, loadDashboard }) {
   };
 
   return (
-    <div>
-      <div>
-        Name: {first_name} {last_name}
-      </div>
-      <div> Phone Number: {mobile_number} </div>
-      <div> Date: {reservation_date} </div>
-      <div> Time: {reservation_time} </div>
-      <div> Number of guests: {people} </div>
-      <div data-reservation-id-status={reservation.reservation_id}>
-        Status: {reservation.status}
-      </div>
-      {reservation.status === "booked" ? (
-        <div>
-          <Link
-            to={`/reservations/${reservation.reservation_id}/seat`}
-            className="btn btn-outline-primary"
+    <tbody>
+      <tr>
+        <td>{first_name}</td>
+        <td> {last_name}</td>
+        <td>{mobile_number}</td>
+        <td>{reservation_date}</td>
+        <td>{reservation_time}</td>
+        <td>{people} </td>
+        <td data-reservation-id-status={reservation.reservation_id}>
+          {reservation.status}
+        </td>
+        {reservation.status === "booked" ? (
+          <td>
+            <Link
+              className="btn btn-outline-info btn-small"
+              to={`/reservations/${reservation.reservation_id}/seat`}
+            >
+              Seat
+            </Link>
+          </td>
+        ) : null}
+        <EditButton reservation={reservation} />
+        <td>
+          <button
+            className="btn btn-outline-danger"
+            data-reservation-id-cancel={reservation.reservation_id}
+            onClick={cancelled}
           >
-            Seat
-          </Link>
-        </div>
-      ) : null}
-      <EditButton reservation={reservation} />
-      <button
-        data-reservation-id-cancel={reservation.reservation_id}
-        className="btn btn-outline-danger"
-        onClick={cancelled}
-      >
-        Cancel
-      </button>
-    </div>
+            Cancel
+          </button>
+        </td>
+      </tr>
+    </tbody>
   );
 }
 
