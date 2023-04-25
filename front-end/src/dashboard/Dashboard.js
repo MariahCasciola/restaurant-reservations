@@ -5,6 +5,8 @@ import ListReservationsOneDate from "../reservations/ListReservationsOneDate";
 import { next, previous } from "../utils/date-time";
 import { useHistory } from "react-router";
 import ListTables from "../tables/ListTables";
+import { trackPromise } from "react-promise-tracker";
+import { usePromiseTracker } from "react-promise-tracker";
 
 /**
  * Defines the dashboard page.
@@ -16,6 +18,7 @@ import ListTables from "../tables/ListTables";
 // default to today
 function Dashboard({ date }) {
   const history = useHistory();
+  const { promiseInProgress } = usePromiseTracker();
   // reservations
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
@@ -36,7 +39,7 @@ function Dashboard({ date }) {
     const abortController = new AbortController();
     setReservationsError(null);
     // list reservations
-    listReservations({ date }, abortController.signal)
+    trackPromise(listReservations({ date }, abortController.signal))
       .then((response) =>
         response.filter(
           (reservation) =>
@@ -52,7 +55,9 @@ function Dashboard({ date }) {
   function loadTables() {
     const abortController = new AbortController();
     setTablesError(null);
-    listTables(abortController.signal).then(setTables).catch(setTablesError);
+    trackPromise(listTables(abortController.signal))
+      .then(setTables)
+      .catch(setTablesError);
     return () => abortController.abort();
   }
 
@@ -93,12 +98,19 @@ function Dashboard({ date }) {
         </div>
         <ErrorAlert error={reservationsError} />
         <ErrorAlert error={tablesError} />
-        <ListReservationsOneDate
-          reservations={reservations}
-          loadDashboard={loadDashboard}
-        />
-        <ListTables tables={tables} loadDashboard={loadDashboard} />
-        {/* {JSON.stringify(tables)} */}
+        {promiseInProgress === true ? (
+          <div class="spinner-border text-info" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        ) : (
+          <>
+            <ListReservationsOneDate
+              reservations={reservations}
+              loadDashboard={loadDashboard}
+            />
+            <ListTables tables={tables} loadDashboard={loadDashboard} />
+          </>
+        )}
       </main>
     </div>
   );
