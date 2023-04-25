@@ -40,6 +40,7 @@ function Dashboard({ date }) {
     setReservationsError(null);
     // list reservations
     trackPromise(listReservations({ date }, abortController.signal))
+    trackPromise(listReservations({ date }, abortController.signal))
       .then((response) =>
         response.filter(
           (reservation) =>
@@ -55,6 +56,9 @@ function Dashboard({ date }) {
   function loadTables() {
     const abortController = new AbortController();
     setTablesError(null);
+    trackPromise(listTables(abortController.signal))
+      .then(setTables)
+      .catch(setTablesError);
     trackPromise(listTables(abortController.signal))
       .then(setTables)
       .catch(setTablesError);
