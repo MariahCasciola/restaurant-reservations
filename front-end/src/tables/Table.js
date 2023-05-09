@@ -37,13 +37,17 @@ function Table({ table, loadDashboard }) {
           ) : (
             <div>
               <div data-table-id-status={table.table_id}>OCCUPIED</div>
-              <button
-                data-table-id-finish={table.table_id}
-                onClick={handleFinishTable}
-              >
-                Finish
-              </button>
             </div>
+          )}
+        </td>
+        <td>
+          {!table.reservation_id ? null : (
+            <button className="btn btn-outline-danger"
+              data-table-id-finish={table.table_id}
+              onClick={handleFinishTable}
+            >
+              Finish
+            </button>
           )}
         </td>
       </tr>
