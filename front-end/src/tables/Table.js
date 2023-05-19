@@ -42,7 +42,7 @@ function Table({ table, loadDashboard }) {
         </td>
         <td>
           {!table.reservation_id ? null : (
-            <button className="btn btn-outline-danger"
+            <button className="btn btn-outline-danger btn-sm"
               data-table-id-finish={table.table_id}
               onClick={handleFinishTable}
             >
