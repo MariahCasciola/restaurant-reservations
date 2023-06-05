@@ -19,7 +19,7 @@ Update the ```./back-end/.env``` file with the connection URL's to the database 
 Run ```npm run start:dev``` to run front-end and back-end concurrently
 ## Run tests
 
-# REST API
+# RESTful API
 
 Paths for restaurtant API:
 
