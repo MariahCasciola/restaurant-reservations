@@ -11,6 +11,7 @@ function ListTables({ tables, loadDashboard }) {
             <th scope="col">Table</th>
             <th scope="col">Capacity</th>
             <th scope="col">Status</th>
+            <th scope="col">Finish</th>
           </tr>
         </thead>
         {tables.map((table, index) => (

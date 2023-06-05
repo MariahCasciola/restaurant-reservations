@@ -5,7 +5,7 @@ function EditButton({ reservation }) {
   return (
     <td>
       <Link
-        className="btn btn-outline-secondary"
+        className="btn btn-outline-secondary btn-sm"
         to={`/reservations/${reservation.reservation_id}/edit`}
       >
         Edit
