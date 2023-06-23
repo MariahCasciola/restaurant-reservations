@@ -57,7 +57,13 @@ function Reservation({ reservation, loadDashboard }) {
               Seat
             </Link>
           </td>
-        ) : null}
+        ) : (
+          <td className="">
+            <button className="btn btn-outline-danger btn-sm" disabled>
+              Seated
+            </button>
+          </td>
+        )}
         <EditButton reservation={reservation} />
         <td>
           <button

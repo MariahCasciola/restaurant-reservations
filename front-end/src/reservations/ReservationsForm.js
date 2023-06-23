@@ -69,7 +69,9 @@ function ReservationsForm({ initialFormState, isCreateType = true }) {
 
   return (
     <div className="container text-center">
-      {isCreateType ? <h1>Create a reservation</h1> : null}
+      <div className="m-3 fs-1">
+        {isCreateType ? <h1>Create a reservation</h1> : null}
+      </div>
       <form onSubmit={isCreateType ? handleCreate : handleEdit}>
         <ErrorAlert error={error} />
         <div className="mb-3">
@@ -153,7 +155,7 @@ function ReservationsForm({ initialFormState, isCreateType = true }) {
         </button>
         <button
           type="button"
-          className="btn btn-outline-danger"
+          className="btn btn-outline-danger ms-2"
           onClick={() => history.goBack()}
         >
           Cancel

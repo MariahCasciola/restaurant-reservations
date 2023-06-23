@@ -39,7 +39,9 @@ function TablesForm() {
 
   return (
     <div className="container text-center">
-      <h1>Create a Table</h1>
+      <div className="m-3 fs-1">
+        <h1>Create a Table</h1>
+      </div>
       <form onSubmit={handleSubmit}>
         <ErrorAlert error={error} />
         <div className="mb-3">
@@ -72,7 +74,7 @@ function TablesForm() {
           Submit
         </button>
         <button
-          className="btn btn-outline-danger"
+          className="btn btn-outline-danger ms-2"
           type="button"
           onClick={() => history.goBack()}
         >

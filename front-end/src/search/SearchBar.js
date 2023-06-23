@@ -52,7 +52,9 @@ function Search() {
       <ErrorAlert error={error} />
       <form onSubmit={handleSubmit}>
         <div className="row">
-          <h1>Find a Reservation</h1>
+          <div className="m-3 fs-1">
+            <h1>Find a Reservation</h1>
+          </div>
           <div className="col">
             <label className="form-label">
               <input
@@ -64,7 +66,7 @@ function Search() {
                 placeholder="Enter a customer's phone number"
               />
             </label>
-            <button className="btn btn-outline-info" type="submit">
+            <button className="btn btn-outline-info ms-2" type="submit">
               Find
             </button>
           </div>
