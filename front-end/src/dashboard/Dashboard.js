@@ -87,18 +87,22 @@ function Dashboard({ date }) {
   return (
     <div className="container text-center">
       <main>
-        <h1>Dashboard</h1>
-        <button onClick={getPreviousDate} className="btn btn-outline-info">
-          Previous
-        </button>
-        <button onClick={getTodayDate} className="btn btn-outline-info">
-          Today
-        </button>
-        <button onClick={getNextDate} className="btn btn-outline-info">
-          Next
-        </button>
-        <div>
-          <h4 className="mb-0">Reservations for {date}</h4>
+        <div className="m-3">
+          <h1 className="m-0 fs-1">Dashboard</h1>
+        </div>
+        <div className="m-3">
+          <button onClick={getPreviousDate} className="btn btn-outline-info">
+            Previous
+          </button>
+          <button onClick={getTodayDate} className="btn btn-outline-info">
+            Today
+          </button>
+          <button onClick={getNextDate} className="btn btn-outline-info">
+            Next
+          </button>
+        </div>
+        <div className="m-3">
+          <h2 className="fs-3">Reservations for {date}</h2>
         </div>
         <ErrorAlert error={reservationsError} />
         <ErrorAlert error={tablesError} />

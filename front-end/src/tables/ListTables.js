@@ -3,9 +3,11 @@ import Table from "./Table";
 
 function ListTables({ tables, loadDashboard }) {
   return (
-    <div className="container text-center">
-      <h4>Tables</h4>
-      <table className="table table-responsive">
+    <div className="table-responsive">
+      <div className="m-3">
+        <h2 className="fs-3">Tables</h2>
+      </div>
+      <table className="table">
         <thead className="table-light">
           <tr>
             <th scope="col">Table</th>
