@@ -84,30 +84,30 @@ Paths for UI:
 
 Dashboard with scrollable responsive tables
 
-![](/starter-restaurant-reservation/front-end/public/mobile-dashboard.png)
-![](/starter-restaurant-reservation/front-end/public/mobile-dashboard-2.png)
-![](/starter-restaurant-reservation/front-end/public/mobile-dashboard-3.png)
+![mobile-dashboard](/front-end/public/mobile-dashboard.png)
+![mobile-dashboard-2](/front-end/public/mobile-dashboard-2.png)
+![mobile-dashboard-3](/front-end/public/mobile-dashboard-3.png)
 
 Search a reservation by full or partial phone number
 
-![](/starter-restaurant-reservation/front-end/public/mobile-search-1.png)
-![](/starter-restaurant-reservation/front-end/public/mobile-search-2.png)
+![](/front-end/public/mobile-search-1.png)
+![](/front-end/public/mobile-search-2.png)
 
 Reservation Form
 
-![](/starter-restaurant-reservation/front-end/public/mobile-new-reservation-1.png)
+![](/front-end/public/mobile-new-reservation-1.png)
 
 Tables Form
 
-![](/starter-restaurant-reservation/front-end/public/moblie-new-table.png)
+![](/front-end/public/moblie-new-table.png)
 
 Edit a reservation
 
-![](/starter-restaurant-reservation/front-end/public/mobile-edit-reservation.png)
+![](/front-end/public/mobile-edit-reservation.png)
 
 Seat a reservation at a table
 
-![](/starter-restaurant-reservation/front-end/public/mobile-seat-reservation-at-table.png)
+![](/front-end/public/mobile-seat-reservation-at-table.png)
 
 # Desktop View
 
