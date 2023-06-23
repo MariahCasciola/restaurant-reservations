@@ -60,7 +60,7 @@ function SeatReservationsAtTables() {
   return (
     <div className="container text-center">
       <ErrorAlert error={tablesError} />
-      <h1>Choose a Table</h1>
+      <h1 className="m-3 fs-1">Choose a Table</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">
@@ -84,7 +84,7 @@ function SeatReservationsAtTables() {
           Submit
         </button>
         <button
-          className="btn btn-outline-danger"
+          className="btn btn-outline-danger m-2"
           type="button"
           onClick={() => history.goBack()}
         >

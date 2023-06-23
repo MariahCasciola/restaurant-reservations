@@ -4,7 +4,7 @@
 
 ## Backend deployment on [Render](https://restaurant-reservation-v9k1.onrender.com)
 
-    Technology: JavaScript, HTML, CSS, ReactJS, Bootstrap, ElephantSQL, Express, Knex, Puppeter, Git, and Node.js.
+    Technology: JavaScript, HTML, CSS, ReactJS, Bootstrap, ElephantSQL, Node.js, Express.js, Knex, PostgreSQL, Puppeter, and Git.
 
 
 # Usage
@@ -13,7 +13,7 @@
 
 + Application that can be used to create reservations and tables for guests.
 
-+ Hours 10 am to 10 pm.
++ Hours 10 am to 10 pm (stopping reservations at 9 so guests have time to finish their meals).
 
 + Contains a search bar that can find all reservations by phone number.
 
@@ -66,9 +66,9 @@ Paths for Restaurant API:
 
 Paths for UI:
 
-`/dashboard` shows reservations of today's date
+`/dashboard` Display reservations of today's date
 
-`/dashboard?date=2023-06-04` shows reservations of the date YYYY-MM-DD 
+`/dashboard?date=2023-06-04` Display reservations of specific date YYYY-MM-DD 
 
 `/search` Search a reservation by number
 
@@ -82,17 +82,32 @@ Paths for UI:
 
 # Mobile View
 
-Dashboard
+Dashboard with scrollable responsive tables
 
-Search
+![](/starter-restaurant-reservation/front-end/public/mobile-dashboard.png)
+![](/starter-restaurant-reservation/front-end/public/mobile-dashboard-2.png)
+![](/starter-restaurant-reservation/front-end/public/mobile-dashboard-3.png)
+
+Search a reservation by full or partial phone number
+
+![](/starter-restaurant-reservation/front-end/public/mobile-search-1.png)
+![](/starter-restaurant-reservation/front-end/public/mobile-search-2.png)
 
 Reservation Form
 
+![](/starter-restaurant-reservation/front-end/public/mobile-new-reservation-1.png)
+
 Tables Form
+
+![](/starter-restaurant-reservation/front-end/public/moblie-new-table.png)
 
 Edit a reservation
 
-Select a table for a reservation
+![](/starter-restaurant-reservation/front-end/public/mobile-edit-reservation.png)
+
+Seat a reservation at a table
+
+![](/starter-restaurant-reservation/front-end/public/mobile-seat-reservation-at-table.png)
 
 # Desktop View
 
